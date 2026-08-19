@@ -13,6 +13,18 @@ Marcas lo que tienes y la app calcula sola:
 Cada persona guarda su propia caja en su navegador (`localStorage`), así que la puedes compartir
 sin que se te mezclen los datos con los de otro.
 
+## Usarla entre dos o más personas
+
+**Tu nombre.** Arriba hay un campo donde pones quién eres. Queda guardado y encabeza el resumen
+que copias, así se sabe de quién es cada texto.
+
+**Compartir tu caja.** El botón *Compartir mi caja* genera un link con tus marcas codificadas
+dentro (en el `#` de la URL, no en ningún servidor). Se lo mandas a quien sea y al abrirlo ve
+**tu** caja, en modo solo lectura, con un aviso arriba y un botón para volver a la suya.
+
+Lo importante: **ver una caja ajena nunca pisa la propia**. Mientras estás en modo visita no se
+guarda nada, los checkboxes quedan bloqueados y los botones de compartir y borrar se esconden.
+
 ## Cómo arrancarlo
 
 1. Doble clic en **`start.bat`**.

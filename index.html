@@ -22,6 +22,20 @@
     <div class="sourceline">37 unidades · 14 composiciones · Datos del wiki de la comunidad, actualizado 06-08-2026</div>
   </header>
 
+  <div class="perfil">
+    <div class="perfil-campo">
+      <label class="stat-label" for="nombre">Tu nombre</label>
+      <input id="nombre" type="text" maxlength="40" placeholder="Matías" autocomplete="off">
+    </div>
+    <span class="perfil-quien" id="quien-es"></span>
+  </div>
+
+  <div class="aviso-visita">
+    <strong>Estás viendo una caja prestada.</strong>
+    Nada de lo que veas acá se guarda ni toca tus propias marcas.
+    <button id="btn-volver" class="ghost">Volver a mi caja</button>
+  </div>
+
   <div class="scoreboard">
     <div class="stat">
       <span class="stat-label">Unidades marcadas</span>
@@ -56,8 +70,11 @@
   <div class="output-box">
     <div class="btn-row">
       <button id="btn-copy">Copiar resumen</button>
+      <button id="btn-share" class="ghost">Compartir mi caja</button>
       <button id="btn-clear" class="ghost">Borrar todo</button>
     </div>
+    <input id="share-url" class="share-url" type="text" readonly hidden
+           aria-label="Link para compartir tu caja">
     <textarea id="output" readonly aria-label="Resumen de tu caja"></textarea>
   </div>
 

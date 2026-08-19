@@ -6,16 +6,54 @@
 
 
 
-  var KEY = "caja7ds.v1";
-  var owned = {};
+  var KEY      = "caja7ds.v1";
+  var KEY_NAME = "caja7ds.nombre";
+
+  var owned   = {};
+  var nombre  = "";
+  var visitando = null;   // nombre del dueño si estamos viendo una caja ajena
 
   try {
     var saved = localStorage.getItem(KEY);
     if (saved) { owned = JSON.parse(saved) || {}; }
-  } catch (e) { owned = {}; }
+    nombre = localStorage.getItem(KEY_NAME) || "";
+  } catch (e) { owned = {}; nombre = ""; }
 
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(owned)); } catch (e) { /* modo privado */ }
+    if (visitando) { return; }   // nunca pisar la caja propia con una ajena
+    try {
+      localStorage.setItem(KEY, JSON.stringify(owned));
+      localStorage.setItem(KEY_NAME, nombre);
+    } catch (e) { /* modo privado */ }
+  }
+
+  // ----- compartir: codificar / decodificar la caja en la URL -----
+
+  function b64url(s) {
+    return btoa(unescape(encodeURIComponent(s)))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function unb64url(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) { s += "="; }
+    return decodeURIComponent(escape(atob(s)));
+  }
+
+  function encodeCaja() {
+    var ids = Object.keys(U).filter(function (id) { return !!owned[id]; });
+    return b64url(JSON.stringify({ n: nombre, u: ids }));
+  }
+
+  function leerCajaCompartida() {
+    var m = /[#&]c=([A-Za-z0-9\-_]+)/.exec(location.hash || "");
+    if (!m) { return null; }
+    try {
+      var data = JSON.parse(unb64url(m[1]));
+      if (!data || !Array.isArray(data.u)) { return null; }
+      var o = {};
+      data.u.forEach(function (id) { if (U[id]) { o[id] = true; } });
+      return { nombre: String(data.n || "").slice(0, 40), owned: o };
+    } catch (e) { return null; }
   }
 
   var board  = document.getElementById("board");
@@ -207,7 +245,9 @@
 
   function buildOutput(totalOwned, fullCount) {
     var lines = [];
-    lines.push("MI CAJA 7DS — " + totalOwned + "/37 unidades meta · " + fullCount + " equipo(s) completo(s)");
+    var quien = visitando ? visitando : (nombre || "");
+    lines.push("CAJA 7DS DE: " + (quien || "(sin nombre)"));
+    lines.push(totalOwned + "/37 unidades meta · " + fullCount + " equipo(s) completo(s)");
     lines.push("");
 
     var have = [];
@@ -260,6 +300,7 @@
   });
 
   document.getElementById("btn-clear").addEventListener("click", function () {
+    if (visitando) { return; }
     owned = {};
     save();
     var boxes = roster.querySelectorAll("input[type=checkbox]");
@@ -267,5 +308,80 @@
     render();
   });
 
+  // ----- perfil: nombre de quien usa la página -----
+
+  var inputNombre = document.getElementById("nombre");
+  var quienEs     = document.getElementById("quien-es");
+
+  function pintarNombre() {
+    if (visitando) {
+      quienEs.textContent = "Estás viendo la caja de " + visitando;
+    } else if (nombre) {
+      quienEs.textContent = "Caja de " + nombre;
+    } else {
+      quienEs.textContent = "Ponle tu nombre para no confundirte con la de tu amigo";
+    }
+  }
+
+  inputNombre.value = nombre;
+  inputNombre.addEventListener("input", function () {
+    nombre = inputNombre.value.slice(0, 40);
+    save();
+    pintarNombre();
+    render();
+  });
+
+  // ----- compartir la caja por link -----
+
+  document.getElementById("btn-share").addEventListener("click", function () {
+    var btn = this;
+    var url = location.origin + location.pathname + "#c=" + encodeCaja();
+    var campo = document.getElementById("share-url");
+    campo.value = url;
+    campo.hidden = false;
+    campo.select();
+
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    if (!ok && navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function () {
+        btn.textContent = "Link copiado";
+        setTimeout(function () { btn.textContent = "Compartir mi caja"; }, 1800);
+      }, function () {
+        btn.textContent = "Copia el link de abajo";
+        setTimeout(function () { btn.textContent = "Compartir mi caja"; }, 2600);
+      });
+      return;
+    }
+    btn.textContent = ok ? "Link copiado" : "Copia el link de abajo";
+    setTimeout(function () { btn.textContent = "Compartir mi caja"; }, 1800);
+  });
+
+  document.getElementById("btn-volver").addEventListener("click", function () {
+    location.hash = "";
+    location.reload();
+  });
+
+  // Si pegan un link compartido con la página ya abierta, el navegador no recarga
+  // solo porque cambió el hash. Forzamos la recarga para que se aplique.
+  window.addEventListener("hashchange", function () {
+    location.reload();
+  });
+
+  // ----- arranque: ¿venimos de un link compartido? -----
+
+  var compartida = leerCajaCompartida();
+  if (compartida) {
+    visitando = compartida.nombre || "tu amigo";
+    owned = compartida.owned;
+    document.body.classList.add("modo-visita");
+    var boxes = roster.querySelectorAll("input[type=checkbox]");
+    for (var i = 0; i < boxes.length; i++) {
+      boxes[i].checked = !!owned[boxes[i].getAttribute("data-unit")];
+      boxes[i].disabled = true;
+    }
+  }
+
+  pintarNombre();
   render();
 })();

@@ -409,3 +409,66 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+
+  /* ---------- perfil y caja compartida ---------- */
+
+  .perfil {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 22px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-left: 4px solid var(--brass);
+  }
+  .perfil-campo { display: flex; flex-direction: column; gap: 4px; }
+  .perfil input {
+    font-family: "Barlow", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    padding: 7px 11px;
+    min-width: 190px;
+  }
+  .perfil input:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+  .perfil-quien {
+    font-size: .9rem;
+    color: var(--ink-2);
+    padding-bottom: 7px;
+  }
+
+  .aviso-visita {
+    display: none;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin-top: 16px;
+    padding: 13px 16px;
+    background: var(--brass-soft);
+    border: 1px dashed var(--brass);
+    color: var(--ink);
+    font-size: .92rem;
+    line-height: 1.45;
+  }
+  .aviso-visita strong { color: var(--brass); }
+  body.modo-visita .aviso-visita { display: flex; }
+  body.modo-visita .perfil-campo { display: none; }
+  body.modo-visita #btn-share,
+  body.modo-visita #btn-clear { display: none; }
+  body.modo-visita .unit { cursor: default; }
+  body.modo-visita .unit input { opacity: .75; cursor: not-allowed; }
+
+  .share-url {
+    width: 100%;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: .78rem;
+    padding: 9px 11px;
+    border: 1px solid var(--brass);
+    background: var(--ground);
+    color: var(--ink-2);
+  }
+  .share-url[hidden] { display: none; }

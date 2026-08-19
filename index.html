@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de Caja Britannia — 7DS Grand Cross</title>
+<meta name="description" content="Marca las unidades que tienes en 7DS: Grand Cross y descubre a qué equipo meta estás más cerca de llegar.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9876;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">7DS Grand Cross · Agosto 2026</div>
+    <h1>Registro de Caja Britannia</h1>
+    <p class="standfirst">Marca las unidades que tienes. La pizarra de arriba te dice al instante a qué equipo meta estás más cerca de llegar y exactamente quién te falta.</p>
+    <div class="sourceline">37 unidades · 14 composiciones · Datos del wiki de la comunidad, actualizado 06-08-2026</div>
+  </header>
+
+  <div class="scoreboard">
+    <div class="stat">
+      <span class="stat-label">Unidades marcadas</span>
+      <span class="stat-value brass" id="s-units">0 / 37</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Equipos completos</span>
+      <span class="stat-value moss" id="s-full">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Aún alcanzables</span>
+      <span class="stat-value" id="s-reach">14</span>
+      <span class="stat-note">de 14 · el resto exige unidades de banners cerrados</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Más cerca de armar</span>
+      <span class="stat-value" id="s-close" style="font-size:1.05rem; font-family:'Barlow',sans-serif; font-weight:700;">—</span>
+      <span class="stat-note" id="s-close-note">Marca unidades para empezar</span>
+    </div>
+  </div>
+
+  <h2>Pizarra de equipos</h2>
+  <p class="section-note">Cada barra son los 4 espacios del equipo. Verde = lo tienes completo. Dorado = te falta poco. Rojo = te falta la mitad o más.</p>
+  <div class="board" id="board"></div>
+
+  <h2>Tu caja</h2>
+  <p class="section-note">Agrupado por equipo. Una misma unidad puede aparecer en varios equipos — si la marcas en uno, se marca en todos. Se guarda solo en tu navegador.</p>
+  <div class="roster" id="roster"></div>
+
+  <h2>Resumen para copiar</h2>
+  <p class="section-note">Cuando termines de marcar, copia este texto y pégamelo en el chat. Con eso te digo qué equipo armar y con qué reemplazos.</p>
+  <div class="output-box">
+    <div class="btn-row">
+      <button id="btn-copy">Copiar resumen</button>
+      <button id="btn-clear" class="ghost">Borrar todo</button>
+    </div>
+    <textarea id="output" readonly aria-label="Resumen de tu caja"></textarea>
+  </div>
+
+  <footer>
+    Las composiciones vienen de la página <a href="https://7dsgc.fandom.com/wiki/PVP_Teams">PVP Teams</a> del wiki de la comunidad (última actualización 6 de agosto de 2026). Es anterior al parche del 19 de agosto, así que Gawain todavía no aparece. Los nombres propios son iguales en español; los títulos entre corchetes son traducción propia — el original en inglés va en cursiva para que puedas buscar guías.
+  </footer>
+
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

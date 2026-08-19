@@ -13,7 +13,7 @@ window.CAJA7DS = (function () {
     loki:       { es: "Loki, Dios del Engaño — [Caos Desterrado]", en: "(Banished Chaos) God of Mischief Loki", tier: "SS" },
     drole:      { es: "Drole de la Paciencia, Gran Guerrero", en: "Great Warrior Drole of Patience", tier: "S" },
     tristan:    { es: "Tristán, Caballero de la Profecía — [Luz de Liones]", en: "(Light of Liones) Knight of the Prophecy Tristan", tier: "SSS" },
-    lancelot:   { es: "Lancelot, Joven Caballero — [Linaje de Héroe]", en: "(Hero's Bloodline) Young Knight Lancelot", tier: "SS" },
+    lancelot:   { es: "Lancelot, Joven Caballero — [Linaje de Héroe]", en: "(Hero's Bloodline) Young Knight Lancelot", tier: "SS", lock: "5.5° Aniversario Supernova, nov-2024" },
     anghalhad:  { es: "Anghalhad, Chica Valiente — [Dulce Tentación]", en: "(Sweet Temptation) Brave Girl Anghalhad — roja", tier: "S" },
     shinra:     { es: "Shinra Kusakabe — [Héroe de las Llamas]", en: "(Hero of Flames) Shinra Kusakabe", tier: "SS", lock: "Colab Fire Force" },
     nemesis:    { es: "Nemesis Meliodas", en: "(The Seven Deadly Sins) Nemesis Meliodas", tier: "SSS", lock: "7° Aniversario, may-2026" },

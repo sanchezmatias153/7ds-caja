@@ -4,31 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Registro de Caja Britannia — 7DS Grand Cross</title>
-<meta name="description" content="Marca las unidades que tienes en 7DS: Grand Cross y descubre a qué equipo meta estás más cerca de llegar.">
+<meta name="description" content="Marca las unidades que tienes en 7DS: Grand Cross y descubre qué equipos puedes armar y qué te sirve contra cada jefe.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9876;</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="assets/styles.css?v=202608251505">
+<link rel="stylesheet" href="assets/styles.css?v=6">
 </head>
 <body>
 
-<div class="wrap">
-
-  <header class="masthead">
-    <div class="eyebrow">7DS Grand Cross · Agosto 2026</div>
-    <h1>Registro de Caja Britannia</h1>
-    <p class="standfirst">Marca las unidades que tienes. La pizarra de arriba te dice al instante a qué equipo meta estás más cerca de llegar y exactamente quién te falta.</p>
-    <div class="sourceline">37 unidades · 14 composiciones · Datos del wiki de la comunidad, actualizado 06-08-2026</div>
-  </header>
-
-  <div class="perfil">
-    <div class="perfil-campo">
-      <label class="stat-label" for="nombre">Tu nombre</label>
-      <input id="nombre" type="text" maxlength="40" placeholder="Matías" autocomplete="off">
-    </div>
-    <span class="perfil-quien" id="quien-es"></span>
+<header class="barra">
+  <div class="barra-in">
+    <h1 id="titulo">Registro de Caja Britannia</h1>
+    <nav class="menu" id="menu">
+      <button data-tab="caja"      class="on">Mi caja</button>
+      <button data-tab="equipos">Equipos</button>
+      <button data-tab="jefes">Jefes</button>
+      <button data-tab="compartir">Compartir</button>
+    </nav>
   </div>
+</header>
+
+<div class="wrap">
 
   <div class="aviso-visita">
     <strong>Estás viendo una caja prestada.</strong>
@@ -36,87 +33,112 @@
     <button id="btn-volver" class="ghost">Volver a mi caja</button>
   </div>
 
-  <div class="scoreboard">
-    <div class="stat">
-      <span class="stat-label">Unidades marcadas</span>
-      <span class="stat-value brass" id="s-units">0 / 37</span>
+  <!-- ============ MI CAJA ============ -->
+  <section class="tab" data-tab="caja">
+
+    <div class="scoreboard">
+      <div class="stat">
+        <span class="stat-label">Unidades marcadas</span>
+        <span class="stat-value brass" id="s-units">0 / 37</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Equipos completos</span>
+        <span class="stat-value moss" id="s-full">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Aún alcanzables</span>
+        <span class="stat-value" id="s-reach">14</span>
+        <span class="stat-note">de 14 · el resto exige unidades de banners cerrados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Más cerca de armar</span>
+        <span class="stat-value chico" id="s-close">—</span>
+        <span class="stat-note" id="s-close-note">Marca unidades para empezar</span>
+      </div>
     </div>
-    <div class="stat">
-      <span class="stat-label">Equipos completos</span>
-      <span class="stat-value moss" id="s-full">0</span>
+
+    <h2>Marca lo que tienes</h2>
+    <p class="section-note">Agrupado por equipo. Una unidad puede salir en varios — si la marcas en uno, se marca en todos. Se guarda en tu navegador.</p>
+
+    <details class="importar">
+      <summary>Cargar mi caja desde un resumen pegado</summary>
+      <p class="section-note">¿Ya tienes un resumen de esta app? Pégalo y se marcan solas. No borra lo que ya tengas.</p>
+      <textarea id="importar-texto" placeholder="Pega el texto que empieza con &quot;CAJA 7DS DE:&quot; o &quot;MI CAJA 7DS&quot;…" aria-label="Resumen para importar"></textarea>
+      <div class="btn-row"><button id="btn-importar">Cargar</button></div>
+      <p id="importar-estado" class="importar-estado"></p>
+    </details>
+
+    <div class="roster" id="roster"></div>
+
+    <h2>Atributo y clan</h2>
+    <p class="section-note">Esto alimenta la pestaña <strong>Jefes</strong>. Los ves en el juego, en la ficha del personaje. Solo salen las unidades que marcaste.</p>
+    <div id="fichas" class="fichas"></div>
+
+    <h3 class="sub">Tus otras unidades</h3>
+    <p class="section-note">Las que no están en la lista meta pero igual usas en PvE. Entran en el cálculo de los jefes.</p>
+    <div class="agregar-propia">
+      <input id="propia-nombre" type="text" maxlength="60" placeholder="Nombre de la unidad" autocomplete="off">
+      <select id="propia-attr" aria-label="Atributo"></select>
+      <select id="propia-clan" aria-label="Clan"></select>
+      <button id="btn-propia">Agregar</button>
     </div>
-    <div class="stat">
-      <span class="stat-label">Aún alcanzables</span>
-      <span class="stat-value" id="s-reach">14</span>
-      <span class="stat-note">de 14 · el resto exige unidades de banners cerrados</span>
+    <div id="propias" class="fichas"></div>
+  </section>
+
+  <!-- ============ EQUIPOS ============ -->
+  <section class="tab" data-tab="equipos" hidden>
+    <h2>Equipos que puedes armar</h2>
+    <p class="section-note">Con <em>tus</em> unidades, agrupadas por atributo y por clan. Necesita que hayas puesto atributo y clan en <strong>Mi caja</strong>.</p>
+    <div id="posibles" class="lista-equipos"></div>
+
+    <h2>Los 14 equipos meta</h2>
+    <p class="section-note">Del wiki de la comunidad. Verde = lo tienes completo. Dorado = te falta poco. Punteado = bloqueado, exige unidades de banners ya cerrados.</p>
+    <div class="lista-equipos" id="board"></div>
+  </section>
+
+  <!-- ============ JEFES ============ -->
+  <section class="tab" data-tab="jefes" hidden>
+    <h2>Qué de tu caja sirve</h2>
+    <p class="section-note">Ficha real de cada jefe de Death Match. El clan pesa más que el atributo: la debilidad de clan llega a <strong>+30%</strong> y el triángulo da <strong>30%</strong>.</p>
+    <div id="jefes" class="jefes"></div>
+  </section>
+
+  <!-- ============ COMPARTIR ============ -->
+  <section class="tab" data-tab="compartir" hidden>
+    <h2>Tu nombre</h2>
+    <p class="section-note">Aparece arriba y encabeza el resumen, para no confundir tu caja con la de otro.</p>
+    <div class="perfil">
+      <div class="perfil-campo">
+        <label class="stat-label" for="nombre">Tu nombre</label>
+        <input id="nombre" type="text" maxlength="40" placeholder="Matías" autocomplete="off">
+      </div>
+      <span class="perfil-quien" id="quien-es"></span>
     </div>
-    <div class="stat">
-      <span class="stat-label">Más cerca de armar</span>
-      <span class="stat-value" id="s-close" style="font-size:1.05rem; font-family:'Barlow',sans-serif; font-weight:700;">—</span>
-      <span class="stat-note" id="s-close-note">Marca unidades para empezar</span>
+
+    <h2>Resumen y link</h2>
+    <p class="section-note"><strong>Copiar resumen</strong> te da el texto para pegar en el chat. <strong>Compartir mi caja</strong> arma un link para mandarle tu caja a alguien.</p>
+    <div class="output-box">
+      <div class="btn-row">
+        <button id="btn-copy">Copiar resumen</button>
+        <button id="btn-share" class="ghost">Compartir mi caja</button>
+        <button id="btn-clear" class="ghost">Borrar todo</button>
+      </div>
+      <input id="share-url" class="share-url" type="text" readonly hidden aria-label="Link para compartir tu caja">
+      <textarea id="output" readonly aria-label="Resumen de tu caja"></textarea>
     </div>
-  </div>
-
-  <h2>Pizarra de equipos</h2>
-  <p class="section-note">Cada barra son los 4 espacios del equipo. Verde = lo tienes completo. Dorado = te falta poco. Rojo = te falta la mitad o más.</p>
-  <div class="board" id="board"></div>
-
-  <h2>Tu caja</h2>
-  <p class="section-note">Agrupado por equipo. Una misma unidad puede aparecer en varios equipos — si la marcas en uno, se marca en todos. Se guarda solo en tu navegador.</p>
-  <details class="importar">
-    <summary>Cargar mi caja desde un resumen pegado</summary>
-    <p class="section-note">Si ya tienes un resumen de esta app (tuyo o de un amigo), pégalo acá y se marcan las unidades solas. No borra lo que ya tengas marcado.</p>
-    <textarea id="importar-texto" placeholder="Pega acá el texto que empieza con &quot;CAJA 7DS DE:&quot; o &quot;MI CAJA 7DS&quot;…" aria-label="Resumen para importar"></textarea>
-    <div class="btn-row">
-      <button id="btn-importar">Cargar</button>
-    </div>
-    <p id="importar-estado" class="importar-estado"></p>
-  </details>
-
-  <div class="roster" id="roster"></div>
-
-  <h2>Equipos que puedes armar</h2>
-  <p class="section-note">Esto no sale del wiki: se arma con las unidades que <em>tú</em> tienes, agrupadas por atributo y por clan. Necesita que hayas completado las fichas de abajo.</p>
-  <div id="posibles" class="board"></div>
-
-  <h2>Fichas de tus unidades</h2>
-  <p class="section-note">Para calcular qué sirve contra cada jefe hace falta el <strong>atributo</strong> y el <strong>clan</strong> de cada unidad. Los ves en el juego, en la ficha del personaje. Solo aparecen acá las que marcaste como tuyas.</p>
-  <div id="fichas" class="fichas"></div>
-
-  <h3 class="sub">Tus otras unidades</h3>
-  <p class="section-note">Tienes unidades fuera de la lista meta que igual sirven para PvE. Agrégalas acá y entran en el cálculo de los jefes.</p>
-  <div class="agregar-propia">
-    <input id="propia-nombre" type="text" maxlength="60" placeholder="Nombre de la unidad" autocomplete="off">
-    <select id="propia-attr" aria-label="Atributo"></select>
-    <select id="propia-clan" aria-label="Clan"></select>
-    <button id="btn-propia">Agregar</button>
-  </div>
-  <div id="propias" class="fichas"></div>
-
-  <h2>Jefes: qué de tu caja sirve</h2>
-  <p class="section-note">Ficha real de cada jefe de Death Match y, debajo, las unidades tuyas que le hacen ventaja. El clan pesa más que el atributo: la debilidad de clan llega a <strong>+30%</strong> y el triángulo da <strong>30%</strong>.</p>
-  <div id="jefes" class="jefes"></div>
-
-  <h2>Resumen para copiar</h2>
-  <p class="section-note">Cuando termines de marcar, copia este texto y pégamelo en el chat. Con eso te digo qué equipo armar y con qué reemplazos.</p>
-  <div class="output-box">
-    <div class="btn-row">
-      <button id="btn-copy">Copiar resumen</button>
-      <button id="btn-share" class="ghost">Compartir mi caja</button>
-      <button id="btn-clear" class="ghost">Borrar todo</button>
-    </div>
-    <input id="share-url" class="share-url" type="text" readonly hidden
-           aria-label="Link para compartir tu caja">
-    <textarea id="output" readonly aria-label="Resumen de tu caja"></textarea>
-  </div>
+  </section>
 
   <footer>
-    Las composiciones vienen de la página <a href="https://7dsgc.fandom.com/wiki/PVP_Teams">PVP Teams</a> del wiki de la comunidad (última actualización 6 de agosto de 2026). Es anterior al parche del 19 de agosto, así que Gawain todavía no aparece. Los nombres propios son iguales en español; los títulos entre corchetes son traducción propia — el original en inglés va en cursiva para que puedas buscar guías.
+    Composiciones y retratos del wiki de la comunidad,
+    <a href="https://7dsgc.fandom.com/wiki/PVP_Teams">PVP Teams</a>.
+    El estado de obtenibilidad viene de los avisos de invocación del
+    <a href="https://forum.netmarble.com/7ds_en/list/1/1">foro de Netmarble</a>.
+    Las imágenes son del juego, propiedad de Netmarble.
   </footer>
 
 </div>
 
-<script src="assets/data.js?v=202608251505"></script>
-<script src="assets/app.js?v=202608251505"></script>
+<script src="assets/data.js?v=6"></script>
+<script src="assets/app.js?v=6"></script>
 </body>
 </html>

@@ -125,6 +125,16 @@ del [foro de Netmarble](https://forum.netmarble.com/7ds_en/list/1/1).
 > Ojo: el meta cambia con cada parche. Estos datos son del corte de agosto de 2026 y
 > **no incluyen a Gawain**, que salió el 19 de agosto.
 
+## Cómo está armada la página
+
+Barra superior fija con **4 pestañas**: Mi caja · Equipos · Jefes · Compartir.
+La pestaña abierta se recuerda entre visitas. Antes era una sola página de 14 pantallas
+de scroll; ahora cada pestaña son 2-3.
+
+Las unidades se muestran como **grilla de retratos** (una por unidad, no una por equipo:
+antes se repetían las que salen en varias composiciones, 56 filas para 37 unidades).
+Las que no tienes salen en gris; al marcarlas toman color y borde verde.
+
 ## Secciones
 
 - **Pizarra de equipos** y **Tu caja** — los 14 equipos meta de PvP y qué te falta.

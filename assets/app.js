@@ -75,27 +75,22 @@
   var board  = document.getElementById("board");
   var roster = document.getElementById("roster");
 
-  // ----- build the checklist, grouped by team -----
-  TEAMS.forEach(function (t, ti) {
-    var block = document.createElement("div");
-    block.className = "clan-block";
+  // ----- grilla unica de unidades (una por unidad, no una por equipo) -----
 
-    var head = document.createElement("div");
-    head.className = "clan-head";
-    var title = document.createElement("span");
-    title.className = "clan-title";
-    title.textContent = t.name;
-    var use = document.createElement("span");
-    use.className = "clan-use";
-    use.textContent = t.use;
-    head.appendChild(title);
-    head.appendChild(use);
-    block.appendChild(head);
+  var ORDEN_TIER = { SSS: 0, SS: 1, S: 2 };
 
-    t.m.forEach(function (id) {
+  Object.keys(U)
+    .sort(function (a, b) {
+      var ta = ORDEN_TIER[U[a].tier], tb = ORDEN_TIER[U[b].tier];
+      if (ta !== tb) { return ta - tb; }
+      return nombreCorto(a).localeCompare(nombreCorto(b), "es");
+    })
+    .forEach(function (id) {
       var u = U[id];
-      var row = document.createElement("label");
-      row.className = "unit";
+
+      var tile = document.createElement("label");
+      tile.className = "tile";
+      tile.setAttribute("data-tier", u.tier);
 
       var box = document.createElement("input");
       box.type = "checkbox";
@@ -109,46 +104,57 @@
         render();
       });
 
-      var text = document.createElement("span");
-      text.className = "unit-text";
+      var marco = document.createElement("span");
+      marco.className = "tile-marco";
 
-      var es = document.createElement("span");
-      es.className = "unit-es";
-      es.textContent = u.es;
+      if (u.img) {
+        var im = document.createElement("img");
+        im.src = u.img;
+        im.alt = "";
+        im.loading = "lazy";
+        im.addEventListener("error", function () { im.remove(); });
+        marco.appendChild(im);
+      }
+
+      var tick = document.createElement("span");
+      tick.className = "tile-tick";
+      tick.setAttribute("aria-hidden", "true");
+      marco.appendChild(tick);
+
+      var tg = document.createElement("span");
+      tg.className = "tile-tier tier-" + u.tier;
+      tg.textContent = u.tier;
+      marco.appendChild(tg);
+
+      if (u.lock) {
+        var lk = document.createElement("span");
+        lk.className = "tile-lock";
+        lk.textContent = "limitada";
+        lk.title = "Sali\u00f3 en: " + u.lock;
+        marco.appendChild(lk);
+      }
+      if (u.duo) {
+        var du = document.createElement("span");
+        du.className = "tile-duo";
+        du.textContent = "d\u00fao";
+        marco.appendChild(du);
+      }
+
+      var nm = document.createElement("span");
+      nm.className = "tile-nombre";
+      nm.textContent = nombreCorto(id);
 
       var en = document.createElement("span");
-      en.className = "unit-en";
+      en.className = "tile-en";
       en.textContent = u.en;
 
-      var meta = document.createElement("span");
-      meta.className = "unit-meta";
-      var tg = document.createElement("span");
-      tg.className = "tag " + (u.tier === "SSS" ? "sss" : u.tier === "SS" ? "ss" : "");
-      tg.textContent = "Tier " + u.tier;
-      meta.appendChild(tg);
-      if (u.duo) {
-        var dg = document.createElement("span");
-        dg.className = "tag duo";
-        dg.textContent = "Unidad dúo";
-        meta.appendChild(dg);
-      }
-      if (u.lock) {
-        var lg = document.createElement("span");
-        lg.className = "tag lock";
-        lg.textContent = "Limitada · " + u.lock;
-        meta.appendChild(lg);
-      }
-
-      text.appendChild(es);
-      text.appendChild(en);
-      text.appendChild(meta);
-      row.appendChild(box);
-      row.appendChild(text);
-      block.appendChild(row);
+      tile.appendChild(box);
+      tile.appendChild(marco);
+      tile.appendChild(nm);
+      tile.appendChild(en);
+      tile.title = u.es + (u.lock ? "\n\nLimitada: " + u.lock : "");
+      roster.appendChild(tile);
     });
-
-    roster.appendChild(block);
-  });
 
   // ----- build the team board -----
   var cards = TEAMS.map(function (t, i) {
@@ -175,15 +181,39 @@
       pipEls.push(p);
     }
 
+    // retratos de los 4 integrantes: se ven tengas o no la unidad
+    var fila = document.createElement("div");
+    fila.className = "mini-equipo";
+    var minis = t.m.map(function (id) {
+      var cont = document.createElement("div");
+      cont.className = "mini";
+      if (U[id].img) {
+        var im = document.createElement("img");
+        im.src = U[id].img;
+        im.alt = nombreCorto(id);
+        im.title = nombreCorto(id);
+        im.loading = "lazy";
+        im.addEventListener("error", function () { im.remove(); });
+        cont.appendChild(im);
+      }
+      var nm2 = document.createElement("span");
+      nm2.className = "mini-nombre";
+      nm2.textContent = nombreCorto(id);
+      cont.appendChild(nm2);
+      fila.appendChild(cont);
+      return { el: cont, id: id };
+    });
+
     var miss = document.createElement("div");
     miss.className = "team-missing";
 
     card.appendChild(head);
     card.appendChild(pips);
+    card.appendChild(fila);
     card.appendChild(miss);
     board.appendChild(card);
 
-    return { el: card, count: ct, pips: pipEls, miss: miss, team: t };
+    return { el: card, count: ct, pips: pipEls, miss: miss, team: t, minis: minis };
   });
 
   function syncAll(id, val) {
@@ -213,6 +243,14 @@
 
       var state = n === 4 ? "full" : isBlocked ? "blocked" : n >= 2 ? "close" : "far";
       c.el.setAttribute("data-state", state);
+
+      if (c.minis) {
+        c.minis.forEach(function (m) {
+          m.el.setAttribute("data-tengo", owned[m.id] ? "si" : "no");
+          m.el.title = nombreCorto(m.id) + (owned[m.id] ? " \u2014 la tienes" : " \u2014 te falta") +
+                       (U[m.id].lock ? " (limitada: " + U[m.id].lock + ")" : "");
+        });
+      }
 
       if (n === 4) {
         fullCount++;
@@ -339,7 +377,7 @@
   var quienEs     = document.getElementById("quien-es");
 
   function pintarTitulo() {
-    var h1 = document.querySelector("h1");
+    var h1 = document.getElementById("titulo");
     var quien = visitando || nombre;
     if (h1) {
       h1.textContent = quien ? "Caja de " + quien : "Registro de Caja Britannia";
@@ -914,6 +952,36 @@
       elPosibles.appendChild(tarjetaGrupo(g.t, g.s, g.m));
     });
   }
+
+
+  // ================= menu de pestanas =================
+
+  (function () {
+    var menu = document.getElementById("menu");
+    if (!menu) { return; }
+    var botones = [].slice.call(menu.querySelectorAll("button"));
+    var secciones = [].slice.call(document.querySelectorAll("section.tab"));
+
+    function mostrar(nombreTab) {
+      botones.forEach(function (b) {
+        b.classList.toggle("on", b.getAttribute("data-tab") === nombreTab);
+      });
+      secciones.forEach(function (sec) {
+        sec.hidden = sec.getAttribute("data-tab") !== nombreTab;
+      });
+      try { localStorage.setItem("caja7ds.tab", nombreTab); } catch (e) {}
+      window.scrollTo(0, 0);
+    }
+
+    botones.forEach(function (b) {
+      b.addEventListener("click", function () { mostrar(b.getAttribute("data-tab")); });
+    });
+
+    var guardada = "caja";
+    try { guardada = localStorage.getItem("caja7ds.tab") || "caja"; } catch (e) {}
+    if (!botones.some(function (b) { return b.getAttribute("data-tab") === guardada; })) { guardada = "caja"; }
+    mostrar(guardada);
+  })();
 
   pintarNombre();
   render();

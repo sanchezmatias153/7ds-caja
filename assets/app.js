@@ -545,7 +545,8 @@
       var f = fichas[id] || {};
       lista.push({
         id: id, nombre: nombreCorto(id), attr: f.attr, clan: f.clan,
-        tier: U[id].tier, img: f.img
+        tier: U[id].tier,
+        img: f.img || U[id].img   // el retrato que ponga el usuario manda sobre el del wiki
       });
     });
     propias.forEach(function (u, i) {

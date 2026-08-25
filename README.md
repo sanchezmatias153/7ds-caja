@@ -80,15 +80,27 @@ Campos:
 
 ## Retratos de las cartas
 
-Por defecto la carta muestra las **iniciales** de la unidad sobre el marco. Si quieres el
-retrato real, pega la URL de la imagen en el campo que aparece en la ficha de esa unidad
-("URL del retrato"). Si la imagen no carga, la carta vuelve sola a las iniciales.
+Las 37 unidades traen retrato. Salen del wiki de la comunidad
+(`static.wikia.nocookie.net`), a 128 px.
 
-No vienen precargados a propósito: el repositorio público de assets nombra los archivos por
-número de variante (`icon_hero_ban_0006_s.png`, `icon_hero_ban_0011_s.png`…) y no existe una
-tabla que diga cuál corresponde a cuál versión del personaje. Mapearlos sería adivinar, y una
-carta con el retrato equivocado confunde más de lo que ayuda. Además son assets del juego,
-propiedad de Netmarble, así que cada quien decide si los enlaza.
+El mapeo **no se hizo adivinando**: la página PVP Teams del wiki trae cada imagen etiquetada
+con el nombre de la unidad, así que se cruzó nombre contra nombre y después se verificó que el
+nombre del archivo contuviera el título entre paréntesis de cada versión. Esa verificación
+pilló un error real: Anghalhad tiene dos versiones y el cruce automático había tomado
+`(A_New_Adventure)` en vez de `(Sweet_Temptation)`.
+
+> El primer intento fue con el repo público de assets, y no sirve: nombra los archivos por
+> número de variante (`icon_hero_ban_0006_s.png`) sin tabla que los relacione.
+
+Para cambiar un retrato, pega otra URL en el campo "URL del retrato" de la ficha de esa unidad;
+lo que pongas manda sobre el del wiki. Si una imagen falla, la carta vuelve sola a las iniciales.
+
+Son assets del juego, propiedad de Netmarble, enlazados desde el wiki de fans.
+
+## Cache de los assets
+
+`index.html` enlaza el CSS y los JS con `?v=AAAAMMDDHHMM`. **Al publicar un cambio hay que subir
+ese número**, si no los navegadores que ya visitaron la página siguen con la versión vieja.
 
 **2. Métela en un equipo**, en el array `TEAMS`:
 

@@ -65,6 +65,24 @@
   <p class="section-note">Agrupado por equipo. Una misma unidad puede aparecer en varios equipos — si la marcas en uno, se marca en todos. Se guarda solo en tu navegador.</p>
   <div class="roster" id="roster"></div>
 
+  <h2>Fichas de tus unidades</h2>
+  <p class="section-note">Para calcular qué sirve contra cada jefe hace falta el <strong>atributo</strong> y el <strong>clan</strong> de cada unidad. Los ves en el juego, en la ficha del personaje. Solo aparecen acá las que marcaste como tuyas.</p>
+  <div id="fichas" class="fichas"></div>
+
+  <h3 class="sub">Tus otras unidades</h3>
+  <p class="section-note">Tienes unidades fuera de la lista meta que igual sirven para PvE. Agrégalas acá y entran en el cálculo de los jefes.</p>
+  <div class="agregar-propia">
+    <input id="propia-nombre" type="text" maxlength="60" placeholder="Nombre de la unidad" autocomplete="off">
+    <select id="propia-attr" aria-label="Atributo"></select>
+    <select id="propia-clan" aria-label="Clan"></select>
+    <button id="btn-propia">Agregar</button>
+  </div>
+  <div id="propias" class="fichas"></div>
+
+  <h2>Jefes: qué de tu caja sirve</h2>
+  <p class="section-note">Ficha real de cada jefe de Death Match y, debajo, las unidades tuyas que le hacen ventaja. El clan pesa más que el atributo: la debilidad de clan llega a <strong>+30%</strong> y el triángulo da <strong>30%</strong>.</p>
+  <div id="jefes" class="jefes"></div>
+
   <h2>Resumen para copiar</h2>
   <p class="section-note">Cuando termines de marcar, copia este texto y pégamelo en el chat. Con eso te digo qué equipo armar y con qué reemplazos.</p>
   <div class="output-box">

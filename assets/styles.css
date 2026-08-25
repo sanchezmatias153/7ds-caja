@@ -472,3 +472,129 @@
     color: var(--ink-2);
   }
   .share-url[hidden] { display: none; }
+
+  /* ---------- fichas de unidades ---------- */
+
+  h3.sub {
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin: 34px 0 4px;
+  }
+
+  .fichas { display: flex; flex-direction: column; gap: 1px; background: var(--line-soft); }
+  .fichas:empty { display: none; }
+
+  .ficha {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 9px 14px;
+    background: var(--surface);
+  }
+  .ficha.incompleta { border-left: 3px solid var(--brass); padding-left: 11px; }
+  .ficha-nombre { flex: 1 1 190px; font-weight: 600; font-size: .94rem; min-width: 0; }
+  .ficha-meta { font-size: .85rem; color: var(--ink-3); }
+  .ficha select {
+    font-family: "Barlow", sans-serif;
+    font-size: .88rem;
+    color: var(--ink);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    padding: 5px 8px;
+    min-width: 118px;
+  }
+  .ficha select:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+  .vacio { color: var(--ink-3); font-size: .92rem; padding: 14px; background: var(--surface); margin: 0; }
+
+  .agregar-propia {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .agregar-propia input {
+    flex: 1 1 200px;
+    font-family: "Barlow", sans-serif;
+    font-size: .95rem;
+    color: var(--ink);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    padding: 8px 11px;
+  }
+  .agregar-propia select {
+    font-family: "Barlow", sans-serif;
+    font-size: .9rem;
+    color: var(--ink);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+  }
+  .agregar-propia input:focus-visible,
+  .agregar-propia select:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+  button.mini { padding: 5px 11px; font-size: .74rem; }
+
+  /* ---------- jefes ---------- */
+
+  .jefes { display: flex; flex-direction: column; gap: 14px; }
+
+  .jefe {
+    border: 1px solid var(--line-soft);
+    border-left: 4px solid var(--crimson);
+    background: var(--surface);
+  }
+  .jefe-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 15px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .jefe-nombre { font-family: "Cinzel", Georgia, serif; font-weight: 700; font-size: 1.02rem; }
+  .jefe-modo {
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+
+  .jefe-ficha {
+    display: grid;
+    grid-template-columns: minmax(120px, auto) 1fr;
+    gap: 1px 14px;
+    margin: 0;
+    padding: 13px 15px;
+  }
+  .jefe-ficha dt {
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .73rem;
+    font-weight: 600;
+    color: var(--ink-3);
+    padding-top: 3px;
+  }
+  .jefe-ficha dd { margin: 0; font-size: .9rem; line-height: 1.45; }
+
+  .jefe-match {
+    padding: 12px 15px;
+    border-top: 1px dashed var(--line);
+    font-size: .9rem;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .jefe-match .ok { color: var(--moss); font-weight: 700; }
+  .jefe-match .pendiente { color: var(--ink-3); font-style: italic; }
+  .jefe-match .evitar { color: var(--crimson); font-size: .85rem; }
+
+  @media (max-width: 520px) {
+    .jefe-ficha { grid-template-columns: 1fr; gap: 0; }
+    .jefe-ficha dd { margin-bottom: 8px; }
+  }

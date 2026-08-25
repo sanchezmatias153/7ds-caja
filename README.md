@@ -101,8 +101,36 @@ del [foro de Netmarble](https://forum.netmarble.com/7ds_en/list/1/1).
 > Ojo: el meta cambia con cada parche. Estos datos son del corte de agosto de 2026 y
 > **no incluyen a Gawain**, que salió el 19 de agosto.
 
+## Secciones
+
+- **Pizarra de equipos** y **Tu caja** — los 14 equipos meta de PvP y qué te falta.
+- **Fichas de tus unidades** — atributo y clan de cada unidad que marcaste. Es lo que
+  alimenta el cálculo de los jefes. También puedes agregar unidades tuyas que no estén
+  en la lista meta.
+- **Jefes** — ficha real de cada jefe de Death Match y qué de tu caja le hace ventaja.
+
+## Cómo agregar jefes
+
+En `assets/data.js`, en el array `BOSSES`:
+
+```js
+{
+  id: "nuevoJefe", nombre: "Nombre en español", en: "English Name", modo: "Death Match",
+  attr: "Fuerza",            // atributo del jefe
+  counterAttr: "Velocidad",  // el atributo que le gana
+  debilClan: "Humano",       // clan que le hace daño extra (o null)
+  fuerteClan: "Hada",        // clan al que resiste (o null)
+  recomendado: "Freeze o Petrify.",
+  inmune: "Sangrado, Veneno...",
+  notas: "Lo que hay que saber para no perder.",
+  cc: [["Normal", 80000], ["Extremo", 160000]]
+}
+```
+
+El triángulo está en `GANA_A`: Fuerza > HP > Velocidad > Fuerza.
+
 ## Pendientes
 
 - [ ] Agregar a Gawain y rehacer el equipo Apocalipsis cuando se conozca su kit
-- [ ] Marcar el atributo (rojo / verde / azul) de cada unidad para filtrar por triángulo
-- [ ] Marcar el clan (Gigante, Hada, Demonio, Diosa, Humano) para armar equipos de evento
+- [ ] Sumar los jefes de Jefe Final / Templo con sus inmunidades
+- [ ] Prellenar atributo y clan de las 37 unidades meta para no tener que completarlas a mano

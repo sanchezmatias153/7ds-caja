@@ -61,5 +61,60 @@ window.CAJA7DS = (function () {
     { name: "Diosas",              use: "Clan Diosa",           m: ["tristan","mael","elizabeth","sariel"] }
   ];
 
-  return { UNITS: UNITS, TEAMS: TEAMS };
+  /* Atributos y clanes del juego. El triangulo es: Fuerza > HP > Velocidad > Fuerza. */
+  var ATTRS = ["Fuerza", "Velocidad", "HP", "Luz", "Oscuridad"];
+  var GANA_A = { Fuerza: "HP", HP: "Velocidad", Velocidad: "Fuerza" };
+  var CLANES = ["Humano", "Gigante", "Hada", "Demonio", "Diosa", "Otro"];
+
+  /* Jefes de Death Match. Datos del wiki de la comunidad, fichas por jefe.
+     counterAttr = el atributo que le gana (el jefe es debil a ese). */
+  var BOSSES = [
+    {
+      id: "redDemon", nombre: "Demonio Rojo", en: "Red Demon", modo: "Death Match",
+      attr: "Fuerza", counterAttr: "Velocidad",
+      debilClan: "Humano", fuerteClan: "Hada",
+      recomendado: "Freeze o Petrify. Las habilidades con efecto Carga le hacen +50%.",
+      inmune: "Sangrado, Veneno, Shock y Corrosion (dano en el tiempo)",
+      notas: "Toma postura al inicio y cada 3 turnos: +50% HP y -30% dano recibido. Los ultimates le hacen -30%, asi que no son tu fuente principal de dano. En Infierno solo se permiten Azul, Luz y Oscuridad.",
+      cc: [["Normal", 80000], ["Dificil", 120000], ["Extremo", 160000], ["Infierno", 300000]]
+    },
+    {
+      id: "grayDemon", nombre: "Demonio Gris", en: "Gray Demon", modo: "Death Match",
+      attr: "Velocidad", counterAttr: "HP",
+      debilClan: "Hada", fuerteClan: "Gigante",
+      recomendado: "Ataques a distancia mientras tenga el buff de Vuelo.",
+      inmune: "Debuff y Dissolve. El control y el drenaje de barra de ultimate NO le afectan.",
+      notas: "Mientras tenga el buff de Vuelo, los ataques cuerpo a cuerpo no le hacen nada. El Bad Blood de King le baja el dano un 30%.",
+      cc: [["Normal", 100000], ["Dificil", 140000], ["Extremo", 180000], ["Infierno", 300000]]
+    },
+    {
+      id: "howlex", nombre: "Howlex (Demonio Carmesi)", en: "Howlex (Crimson Demon)", modo: "Death Match",
+      attr: "HP", counterAttr: "Fuerza",
+      debilClan: "Demonio", fuerteClan: "Diosa",
+      recomendado: "Ignite, Punto Debil e Infect. Recibe +50% de dano extra por Punto Debil.",
+      inmune: "Incapacitacion, Disable y reduccion de stats",
+      notas: "Reduce un 30% el dano de los contraataques. El Bad Blood de Meliodas le baja el dano un 30%.",
+      cc: []
+    },
+    {
+      id: "originalDemon", nombre: "Demonio Original", en: "Original Demon", modo: "Death Match",
+      attr: "HP", counterAttr: "Fuerza",
+      debilClan: "Gigante", fuerteClan: "Diosa",
+      recomendado: "Taunt, Cancelar Debuffs y Power Strike.",
+      inmune: "(sin inmunidades destacadas)",
+      notas: "En fases 1 y 2 no puedes quitarle mas del 40% de su HP maximo con un solo ataque, asi que el dano de un golpe no sirve. El Bad Blood de Diane le baja el dano un 30%.",
+      cc: []
+    },
+    {
+      id: "bellmoth", nombre: "Bellmoth", en: "Bellmoth", modo: "Death Match",
+      attr: "Velocidad", counterAttr: "HP",
+      debilClan: null, fuerteClan: null,
+      recomendado: "Cancelar Posturas y ataques con Carga.",
+      inmune: "Esquiva los ataques a distancia (menos los ultimates)",
+      notas: "Reduce un 50% el dano de los ultimates. Toma postura cada 2 turnos. No tiene ventaja ni desventaja de clan. El Bad Blood de Jericho le baja el dano un 30%.",
+      cc: []
+    }
+  ];
+
+  return { UNITS: UNITS, TEAMS: TEAMS, BOSSES: BOSSES, ATTRS: ATTRS, CLANES: CLANES, GANA_A: GANA_A };
 })();

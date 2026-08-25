@@ -1,15 +1,22 @@
 (function () {
   "use strict";
 
-  var U = window.CAJA7DS.UNITS;
-  var TEAMS = window.CAJA7DS.TEAMS;
+  var U       = window.CAJA7DS.UNITS;
+  var TEAMS   = window.CAJA7DS.TEAMS;
+  var BOSSES  = window.CAJA7DS.BOSSES;
+  var ATTRS   = window.CAJA7DS.ATTRS;
+  var CLANES  = window.CAJA7DS.CLANES;
 
 
 
-  var KEY      = "caja7ds.v1";
-  var KEY_NAME = "caja7ds.nombre";
+  var KEY       = "caja7ds.v1";
+  var KEY_NAME  = "caja7ds.nombre";
+  var KEY_FICHA = "caja7ds.fichas";   // atributo y clan por unidad
+  var KEY_MIAS  = "caja7ds.propias";  // unidades fuera de la lista meta
 
   var owned   = {};
+  var fichas  = {};   // { idUnidad: { attr: "Velocidad", clan: "Humano" } }
+  var propias = [];   // [ { id, nombre, attr, clan } ]
   var nombre  = "";
   var visitando = null;   // nombre del dueño si estamos viendo una caja ajena
 
@@ -17,13 +24,17 @@
     var saved = localStorage.getItem(KEY);
     if (saved) { owned = JSON.parse(saved) || {}; }
     nombre = localStorage.getItem(KEY_NAME) || "";
-  } catch (e) { owned = {}; nombre = ""; }
+    fichas = JSON.parse(localStorage.getItem(KEY_FICHA) || "{}") || {};
+    propias = JSON.parse(localStorage.getItem(KEY_MIAS) || "[]") || [];
+  } catch (e) { owned = {}; nombre = ""; fichas = {}; propias = []; }
 
   function save() {
     if (visitando) { return; }   // nunca pisar la caja propia con una ajena
     try {
       localStorage.setItem(KEY, JSON.stringify(owned));
       localStorage.setItem(KEY_NAME, nombre);
+      localStorage.setItem(KEY_FICHA, JSON.stringify(fichas));
+      localStorage.setItem(KEY_MIAS, JSON.stringify(propias));
     } catch (e) { /* modo privado */ }
   }
 
@@ -41,7 +52,7 @@
 
   function encodeCaja() {
     var ids = Object.keys(U).filter(function (id) { return !!owned[id]; });
-    return b64url(JSON.stringify({ n: nombre, u: ids }));
+    return b64url(JSON.stringify({ n: nombre, u: ids, f: fichas, p: propias }));
   }
 
   function leerCajaCompartida() {
@@ -52,7 +63,12 @@
       if (!data || !Array.isArray(data.u)) { return null; }
       var o = {};
       data.u.forEach(function (id) { if (U[id]) { o[id] = true; } });
-      return { nombre: String(data.n || "").slice(0, 40), owned: o };
+      return {
+        nombre: String(data.n || "").slice(0, 40),
+        owned: o,
+        fichas: (data.f && typeof data.f === "object") ? data.f : {},
+        propias: Array.isArray(data.p) ? data.p : []
+      };
     } catch (e) { return null; }
   }
 
@@ -241,6 +257,14 @@
     }
 
     buildOutput(totalOwned, fullCount);
+
+    // marcar o desmarcar una unidad cambia qué fichas hay que completar
+    // y qué le sirve a cada jefe, así que se redibujan juntas.
+    if (typeof elFichas !== "undefined" && elFichas) {
+      renderFichas();
+      renderPropias();
+      renderJefes();
+    }
   }
 
   function buildOutput(totalOwned, fullCount) {
@@ -374,6 +398,8 @@
   if (compartida) {
     visitando = compartida.nombre || "tu amigo";
     owned = compartida.owned;
+    fichas = compartida.fichas;
+    propias = compartida.propias;
     document.body.classList.add("modo-visita");
     var boxes = roster.querySelectorAll("input[type=checkbox]");
     for (var i = 0; i < boxes.length; i++) {
@@ -382,6 +408,237 @@
     }
   }
 
+
+  // ================= fichas: atributo y clan por unidad =================
+
+  var elFichas  = document.getElementById("fichas");
+  var elPropias = document.getElementById("propias");
+  var elJefes   = document.getElementById("jefes");
+  var GANA_A    = window.CAJA7DS.GANA_A;
+
+  function selector(opciones, valor, vacio) {
+    var sel = document.createElement("select");
+    var o0 = document.createElement("option");
+    o0.value = ""; o0.textContent = vacio;
+    sel.appendChild(o0);
+    opciones.forEach(function (op) {
+      var o = document.createElement("option");
+      o.value = op; o.textContent = op;
+      if (op === valor) { o.selected = true; }
+      sel.appendChild(o);
+    });
+    return sel;
+  }
+
+  function nombreCorto(id) {
+    return U[id].es.split(" \u2014 ")[0];
+  }
+
+  function renderFichas() {
+    elFichas.innerHTML = "";
+    var ids = Object.keys(U).filter(function (id) { return !!owned[id]; });
+
+    if (!ids.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "vacio";
+      vacio.textContent = "Marca unidades en \u201cTu caja\u201d y aparecen ac\u00e1 para completarles atributo y clan.";
+      elFichas.appendChild(vacio);
+      return;
+    }
+
+    ids.forEach(function (id) {
+      var f = fichas[id] || {};
+      var fila = document.createElement("div");
+      fila.className = "ficha";
+      if (!f.attr || !f.clan) { fila.classList.add("incompleta"); }
+
+      var nom = document.createElement("span");
+      nom.className = "ficha-nombre";
+      nom.textContent = nombreCorto(id);
+
+      var selA = selector(ATTRS, f.attr, "Atributo\u2026");
+      var selC = selector(CLANES, f.clan, "Clan\u2026");
+      selA.disabled = !!visitando;
+      selC.disabled = !!visitando;
+
+      selA.addEventListener("change", function () {
+        fichas[id] = fichas[id] || {};
+        if (selA.value) { fichas[id].attr = selA.value; } else { delete fichas[id].attr; }
+        save(); renderFichas(); renderJefes();
+      });
+      selC.addEventListener("change", function () {
+        fichas[id] = fichas[id] || {};
+        if (selC.value) { fichas[id].clan = selC.value; } else { delete fichas[id].clan; }
+        save(); renderFichas(); renderJefes();
+      });
+
+      fila.appendChild(nom);
+      fila.appendChild(selA);
+      fila.appendChild(selC);
+      elFichas.appendChild(fila);
+    });
+  }
+
+  function renderPropias() {
+    elPropias.innerHTML = "";
+    propias.forEach(function (u, i) {
+      var fila = document.createElement("div");
+      fila.className = "ficha";
+
+      var nom = document.createElement("span");
+      nom.className = "ficha-nombre";
+      nom.textContent = u.nombre;
+
+      var meta = document.createElement("span");
+      meta.className = "ficha-meta";
+      meta.textContent = (u.attr || "sin atributo") + " \u00b7 " + (u.clan || "sin clan");
+
+      fila.appendChild(nom);
+      fila.appendChild(meta);
+
+      if (!visitando) {
+        var quitar = document.createElement("button");
+        quitar.className = "ghost mini";
+        quitar.textContent = "Quitar";
+        quitar.addEventListener("click", function () {
+          propias.splice(i, 1);
+          save(); renderPropias(); renderJefes();
+        });
+        fila.appendChild(quitar);
+      }
+      elPropias.appendChild(fila);
+    });
+  }
+
+  // ================= jefes =================
+
+  function unidadesDisponibles() {
+    var lista = [];
+    Object.keys(U).forEach(function (id) {
+      if (!owned[id]) { return; }
+      var f = fichas[id] || {};
+      lista.push({ nombre: nombreCorto(id), attr: f.attr, clan: f.clan });
+    });
+    propias.forEach(function (u) {
+      lista.push({ nombre: u.nombre, attr: u.attr, clan: u.clan });
+    });
+    return lista;
+  }
+
+  function renderJefes() {
+    elJefes.innerHTML = "";
+    var mias = unidadesDisponibles();
+    var conFicha = mias.filter(function (u) { return u.attr || u.clan; }).length;
+
+    BOSSES.forEach(function (b) {
+      var card = document.createElement("div");
+      card.className = "jefe";
+
+      var h = document.createElement("div");
+      h.className = "jefe-head";
+      var hn = document.createElement("span");
+      hn.className = "jefe-nombre"; hn.textContent = b.nombre;
+      var hm = document.createElement("span");
+      hm.className = "jefe-modo"; hm.textContent = b.modo;
+      h.appendChild(hn); h.appendChild(hm);
+      card.appendChild(h);
+
+      var ficha = document.createElement("dl");
+      ficha.className = "jefe-ficha";
+      function dato(k, v) {
+        if (!v) { return; }
+        var dt = document.createElement("dt"); dt.textContent = k;
+        var dd = document.createElement("dd"); dd.textContent = v;
+        ficha.appendChild(dt); ficha.appendChild(dd);
+      }
+      dato("Atributo del jefe", b.attr);
+      dato("Ll\u00e9vale", b.counterAttr + (b.debilClan ? " y/o clan " + b.debilClan : ""));
+      dato("No lleves", (b.fuerteClan ? "clan " + b.fuerteClan + ", " : "") + "atributo " + GANA_A[b.attr]);
+      dato("Recomendado", b.recomendado);
+      dato("Inmune a", b.inmune);
+      dato("Ojo con", b.notas);
+      if (b.cc && b.cc.length) {
+        dato("CC recomendado", b.cc.map(function (x) {
+          return x[0] + " " + x[1].toLocaleString("es-CL");
+        }).join(" \u00b7 "));
+      }
+      card.appendChild(ficha);
+
+      var sirven = mias.filter(function (u) {
+        return (b.counterAttr && u.attr === b.counterAttr) || (b.debilClan && u.clan === b.debilClan);
+      });
+      var malas = mias.filter(function (u) {
+        return (b.fuerteClan && u.clan === b.fuerteClan) || (u.attr && u.attr === GANA_A[b.attr]);
+      });
+
+      var res = document.createElement("div");
+      res.className = "jefe-match";
+
+      var linea = document.createElement("div");
+      if (sirven.length) {
+        var ok = document.createElement("span");
+        ok.className = "ok";
+        ok.textContent = "Te sirven (" + sirven.length + "): ";
+        linea.appendChild(ok);
+        linea.appendChild(document.createTextNode(
+          sirven.map(function (u) {
+            var por = [];
+            if (b.counterAttr && u.attr === b.counterAttr) { por.push(u.attr); }
+            if (b.debilClan && u.clan === b.debilClan) { por.push("clan " + u.clan); }
+            return u.nombre + " (" + por.join(" + ") + ")";
+          }).join(", ")
+        ));
+      } else {
+        var pend = document.createElement("span");
+        pend.className = "pendiente";
+        pend.textContent = !mias.length
+          ? "Marca tus unidades para ver qu\u00e9 te sirve."
+          : (conFicha === 0
+              ? "Completa atributo y clan arriba para ver qu\u00e9 te sirve."
+              : "Ninguna de tus unidades con ficha le hace ventaja.");
+        linea.appendChild(pend);
+      }
+      res.appendChild(linea);
+
+      if (malas.length) {
+        var ev = document.createElement("div");
+        ev.className = "evitar";
+        ev.textContent = "En desventaja: " + malas.map(function (u) {
+          var por = [];
+          if (b.fuerteClan && u.clan === b.fuerteClan) { por.push("clan " + u.clan); }
+          if (u.attr && u.attr === GANA_A[b.attr]) { por.push(u.attr); }
+          return u.nombre + " (" + por.join(" + ") + ")";
+        }).join(", ");
+        res.appendChild(ev);
+      }
+
+      card.appendChild(res);
+      elJefes.appendChild(card);
+    });
+  }
+
+  (function () {
+    var selA = document.getElementById("propia-attr");
+    var selC = document.getElementById("propia-clan");
+    selA.appendChild(new Option("Atributo\u2026", ""));
+    ATTRS.forEach(function (a) { selA.appendChild(new Option(a, a)); });
+    selC.appendChild(new Option("Clan\u2026", ""));
+    CLANES.forEach(function (c) { selC.appendChild(new Option(c, c)); });
+
+    document.getElementById("btn-propia").addEventListener("click", function () {
+      if (visitando) { return; }
+      var inp = document.getElementById("propia-nombre");
+      var n = inp.value.trim();
+      if (!n) { inp.focus(); return; }
+      propias.push({ nombre: n.slice(0, 60), attr: selA.value || undefined, clan: selC.value || undefined });
+      inp.value = ""; selA.value = ""; selC.value = "";
+      save(); renderPropias(); renderJefes();
+    });
+  })();
+
   pintarNombre();
   render();
+  renderFichas();
+  renderPropias();
+  renderJefes();
 })();

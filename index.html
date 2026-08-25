@@ -63,7 +63,21 @@
 
   <h2>Tu caja</h2>
   <p class="section-note">Agrupado por equipo. Una misma unidad puede aparecer en varios equipos — si la marcas en uno, se marca en todos. Se guarda solo en tu navegador.</p>
+  <details class="importar">
+    <summary>Cargar mi caja desde un resumen pegado</summary>
+    <p class="section-note">Si ya tienes un resumen de esta app (tuyo o de un amigo), pégalo acá y se marcan las unidades solas. No borra lo que ya tengas marcado.</p>
+    <textarea id="importar-texto" placeholder="Pega acá el texto que empieza con &quot;CAJA 7DS DE:&quot; o &quot;MI CAJA 7DS&quot;…" aria-label="Resumen para importar"></textarea>
+    <div class="btn-row">
+      <button id="btn-importar">Cargar</button>
+    </div>
+    <p id="importar-estado" class="importar-estado"></p>
+  </details>
+
   <div class="roster" id="roster"></div>
+
+  <h2>Equipos que puedes armar</h2>
+  <p class="section-note">Esto no sale del wiki: se arma con las unidades que <em>tú</em> tienes, agrupadas por atributo y por clan. Necesita que hayas completado las fichas de abajo.</p>
+  <div id="posibles" class="board"></div>
 
   <h2>Fichas de tus unidades</h2>
   <p class="section-note">Para calcular qué sirve contra cada jefe hace falta el <strong>atributo</strong> y el <strong>clan</strong> de cada unidad. Los ves en el juego, en la ficha del personaje. Solo aparecen acá las que marcaste como tuyas.</p>

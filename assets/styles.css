@@ -598,3 +598,36 @@
     .jefe-ficha { grid-template-columns: 1fr; gap: 0; }
     .jefe-ficha dd { margin-bottom: 8px; }
   }
+
+  /* ---------- importar caja ---------- */
+
+  .importar {
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    padding: 0 15px;
+    margin-bottom: 16px;
+  }
+  .importar summary {
+    cursor: pointer;
+    padding: 12px 0;
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--brass);
+  }
+  .importar summary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .importar[open] { padding-bottom: 14px; }
+  .importar .section-note { margin: 0 0 10px; }
+  .importar textarea { min-height: 130px; margin-bottom: 10px; }
+
+  .importar-estado { margin: 10px 0 0; font-size: .88rem; line-height: 1.45; }
+  .importar-estado:empty { display: none; }
+  .importar-estado.bueno { color: var(--moss); font-weight: 600; }
+  .importar-estado.aviso { color: var(--brass); }
+  .importar-estado.malo  { color: var(--crimson); }
+
+  /* equipos posibles: el subtitulo va dentro de la tarjeta */
+  #posibles .clan-use { text-align: left; }
+  #posibles .team-missing b.ok4 { color: var(--moss); }

@@ -264,6 +264,7 @@
       renderFichas();
       renderPropias();
       renderJefes();
+      renderPosibles();
     }
   }
 
@@ -464,12 +465,12 @@
       selA.addEventListener("change", function () {
         fichas[id] = fichas[id] || {};
         if (selA.value) { fichas[id].attr = selA.value; } else { delete fichas[id].attr; }
-        save(); renderFichas(); renderJefes();
+        save(); renderFichas(); renderJefes(); renderPosibles();
       });
       selC.addEventListener("change", function () {
         fichas[id] = fichas[id] || {};
         if (selC.value) { fichas[id].clan = selC.value; } else { delete fichas[id].clan; }
-        save(); renderFichas(); renderJefes();
+        save(); renderFichas(); renderJefes(); renderPosibles();
       });
 
       fila.appendChild(nom);
@@ -502,7 +503,7 @@
         quitar.textContent = "Quitar";
         quitar.addEventListener("click", function () {
           propias.splice(i, 1);
-          save(); renderPropias(); renderJefes();
+          save(); renderPropias(); renderJefes(); renderPosibles();
         });
         fila.appendChild(quitar);
       }
@@ -586,7 +587,7 @@
             if (b.counterAttr && u.attr === b.counterAttr) { por.push(u.attr); }
             if (b.debilClan && u.clan === b.debilClan) { por.push("clan " + u.clan); }
             return u.nombre + " (" + por.join(" + ") + ")";
-          }).join(", ")
+          }).join(" · ")
         ));
       } else {
         var pend = document.createElement("span");
@@ -608,7 +609,7 @@
           if (b.fuerteClan && u.clan === b.fuerteClan) { por.push("clan " + u.clan); }
           if (u.attr && u.attr === GANA_A[b.attr]) { por.push(u.attr); }
           return u.nombre + " (" + por.join(" + ") + ")";
-        }).join(", ");
+        }).join(" · ");
         res.appendChild(ev);
       }
 
@@ -632,13 +633,181 @@
       if (!n) { inp.focus(); return; }
       propias.push({ nombre: n.slice(0, 60), attr: selA.value || undefined, clan: selC.value || undefined });
       inp.value = ""; selA.value = ""; selC.value = "";
-      save(); renderPropias(); renderJefes();
+      save(); renderPropias(); renderJefes(); renderPosibles();
     });
   })();
+
+
+  // ================= importar caja desde un resumen pegado =================
+
+  function normalizar(t) {
+    return t.replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  var porNombreEn = {};
+  Object.keys(U).forEach(function (id) { porNombreEn[normalizar(U[id].en)] = id; });
+
+  function importarResumen(texto) {
+    var lineas = texto.split(/\r?\n/);
+    var dentro = false;
+    var pedidos = [];
+
+    lineas.forEach(function (l) {
+      if (/^\s*TENGO\s*\(/i.test(l)) { dentro = true; return; }
+      if (/^\s*ESTADO POR EQUIPO/i.test(l)) { dentro = false; return; }
+      if (!dentro) { return; }
+      var m = /^\s*-\s+(.*\S)\s*$/.exec(l);
+      if (m) { pedidos.push(m[1]); }
+    });
+
+    var ok = 0, noEncontradas = [];
+    pedidos.forEach(function (nombre) {
+      var id = porNombreEn[normalizar(nombre)];
+      if (id) { owned[id] = true; ok++; }
+      else if (!/ninguna marcada/i.test(nombre)) { noEncontradas.push(nombre); }
+    });
+
+    return { total: pedidos.length, ok: ok, fallaron: noEncontradas };
+  }
+
+  var btnImportar = document.getElementById("btn-importar");
+  if (btnImportar) {
+    btnImportar.addEventListener("click", function () {
+      if (visitando) { return; }
+      var ta = document.getElementById("importar-texto");
+      var estado = document.getElementById("importar-estado");
+      var texto = ta.value || "";
+
+      if (!texto.trim()) {
+        estado.className = "importar-estado malo";
+        estado.textContent = "Pega primero el resumen.";
+        return;
+      }
+
+      var r = importarResumen(texto);
+
+      if (!r.total) {
+        estado.className = "importar-estado malo";
+        estado.textContent = "No encontr\u00e9 la lista de unidades. El texto tiene que traer la secci\u00f3n \u201cTENGO (n):\u201d con las unidades en l\u00edneas que empiezan con gui\u00f3n.";
+        return;
+      }
+
+      save();
+      var boxes = roster.querySelectorAll("input[data-unit]");
+      for (var i = 0; i < boxes.length; i++) {
+        boxes[i].checked = !!owned[boxes[i].getAttribute("data-unit")];
+      }
+      render();
+
+      estado.className = "importar-estado " + (r.fallaron.length ? "aviso" : "bueno");
+      estado.textContent = "Marqu\u00e9 " + r.ok + " de " + r.total + " unidades." +
+        (r.fallaron.length ? " No reconoc\u00ed: " + r.fallaron.join("; ") + "." : "");
+    });
+  }
+
+  // ================= equipos que puedes armar con lo tuyo =================
+
+  var elPosibles = document.getElementById("posibles");
+
+  function tarjetaGrupo(titulo, subtitulo, miembros) {
+    var card = document.createElement("div");
+    card.className = "team-card";
+    card.setAttribute("data-state", miembros.length >= 4 ? "full" : miembros.length >= 2 ? "close" : "far");
+
+    var head = document.createElement("div");
+    head.className = "team-head";
+    var nm = document.createElement("span");
+    nm.className = "team-name"; nm.textContent = titulo;
+    var ct = document.createElement("span");
+    ct.className = "team-count";
+    ct.textContent = Math.min(miembros.length, 4) + " / 4";
+    head.appendChild(nm); head.appendChild(ct);
+
+    var pips = document.createElement("div");
+    pips.className = "pips";
+    for (var k = 0; k < 4; k++) {
+      var pip = document.createElement("span");
+      pip.className = "pip" + (k < miembros.length ? " on" : "");
+      pips.appendChild(pip);
+    }
+
+    var cuerpo = document.createElement("div");
+    cuerpo.className = "team-missing";
+    if (miembros.length >= 4) {
+      cuerpo.innerHTML = "<b class='ok4'>" + miembros.slice(0, 4).join(" · ") + "</b>";
+      if (miembros.length > 4) {
+        cuerpo.innerHTML += '<span class="locked-note">Suplentes: ' + miembros.slice(4).join(" · ") + "</span>";
+      }
+    } else {
+      cuerpo.textContent = miembros.join(" · ");
+      var falta = document.createElement("span");
+      falta.className = "locked-note";
+      falta.textContent = "Te faltan " + (4 - miembros.length) + " para completarlo";
+      cuerpo.appendChild(falta);
+    }
+
+    var sub = document.createElement("span");
+    sub.className = "clan-use";
+    sub.textContent = subtitulo;
+
+    card.appendChild(head);
+    card.appendChild(sub);
+    card.appendChild(pips);
+    card.appendChild(cuerpo);
+    return card;
+  }
+
+  function renderPosibles() {
+    if (!elPosibles) { return; }
+    elPosibles.innerHTML = "";
+    var mias = unidadesDisponibles();
+    var conFicha = mias.filter(function (u) { return u.attr || u.clan; });
+
+    if (!conFicha.length) {
+      var aviso = document.createElement("p");
+      aviso.className = "vacio";
+      aviso.textContent = mias.length
+        ? "Completa el atributo y el clan de tus unidades m\u00e1s abajo y ac\u00e1 aparecen los equipos que puedes armar."
+        : "Marca tus unidades primero.";
+      elPosibles.appendChild(aviso);
+      return;
+    }
+
+    var porAttr = {}, porClan = {};
+    conFicha.forEach(function (u) {
+      if (u.attr) { (porAttr[u.attr] = porAttr[u.attr] || []).push(u.nombre); }
+      if (u.clan) { (porClan[u.clan] = porClan[u.clan] || []).push(u.nombre); }
+    });
+
+    var grupos = [];
+    Object.keys(porAttr).forEach(function (a) {
+      grupos.push({ t: "Equipo " + a, s: "Por atributo", m: porAttr[a] });
+    });
+    Object.keys(porClan).forEach(function (c) {
+      if (c === "Otro") { return; }
+      grupos.push({ t: "Equipo " + c, s: "Por clan", m: porClan[c] });
+    });
+
+    grupos.sort(function (x, y) { return y.m.length - x.m.length; });
+    grupos = grupos.filter(function (g) { return g.m.length >= 2; });
+
+    if (!grupos.length) {
+      var v = document.createElement("p");
+      v.className = "vacio";
+      v.textContent = "Todav\u00eda no tienes 2 unidades que compartan atributo o clan.";
+      elPosibles.appendChild(v);
+      return;
+    }
+
+    grupos.forEach(function (g) {
+      elPosibles.appendChild(tarjetaGrupo(g.t, g.s, g.m));
+    });
+  }
 
   pintarNombre();
   render();
   renderFichas();
   renderPropias();
   renderJefes();
+  renderPosibles();
 })();

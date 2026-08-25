@@ -104,6 +104,11 @@ del [foro de Netmarble](https://forum.netmarble.com/7ds_en/list/1/1).
 ## Secciones
 
 - **Pizarra de equipos** y **Tu caja** — los 14 equipos meta de PvP y qué te falta.
+- **Cargar mi caja desde un resumen pegado** — dentro de "Tu caja". Pegas un resumen generado
+  por la app (tuyo o de un amigo) y marca las unidades solo. No borra lo que ya tenías marcado,
+  y acepta tanto el formato nuevo (`CAJA 7DS DE:`) como el viejo (`MI CAJA 7DS`).
+- **Equipos que puedes armar** — no sale del wiki: agrupa TUS unidades por atributo y por clan
+  y te muestra cuáles llegan a 4, con suplentes.
 - **Fichas de tus unidades** — atributo y clan de cada unidad que marcaste. Es lo que
   alimenta el cálculo de los jefes. También puedes agregar unidades tuyas que no estén
   en la lista meta.
@@ -134,3 +139,4 @@ El triángulo está en `GANA_A`: Fuerza > HP > Velocidad > Fuerza.
 - [ ] Agregar a Gawain y rehacer el equipo Apocalipsis cuando se conozca su kit
 - [ ] Sumar los jefes de Jefe Final / Templo con sus inmunidades
 - [ ] Prellenar atributo y clan de las 37 unidades meta para no tener que completarlas a mano
+- [ ] Botón "Copiar contexto para Claude" que arme el bloque completo de una

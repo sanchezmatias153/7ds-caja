@@ -631,3 +631,152 @@
   /* equipos posibles: el subtitulo va dentro de la tarjeta */
   #posibles .clan-use { text-align: left; }
   #posibles .team-missing b.ok4 { color: var(--moss); }
+
+  /* ---------- cartas estilo juego ---------- */
+
+  .equipo-juego {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-left: 4px solid var(--line);
+    padding: 13px 15px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .equipo-juego[data-state="full"]  { border-left-color: var(--moss); }
+  .equipo-juego[data-state="close"] { border-left-color: var(--brass); }
+  .equipo-juego[data-state="far"]   { border-left-color: var(--crimson); }
+
+  .equipo-juego-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .cartas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+  .cartas.suplentes { grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); opacity: .72; }
+
+  .carta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+  .carta-rol {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: .62rem;
+    text-align: center;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 0;
+  }
+  .carta-rol.main { color: var(--brass); border-color: var(--brass); background: var(--brass-soft); }
+
+  .carta-marco {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border: 2px solid #6D4C93;
+    background:
+      linear-gradient(160deg, #7E5AA8 0%, #4E3670 48%, #2F2145 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carta-marco::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 226, 160, .38);
+    pointer-events: none;
+  }
+
+  .carta-retrato { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .carta-iniciales {
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: rgba(255, 240, 210, .92);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, .55);
+    letter-spacing: .02em;
+  }
+
+  .carta-orbe {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, .82);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .5);
+    z-index: 2;
+  }
+  .carta[data-attr="Fuerza"]     .carta-orbe { background: #D8434B; }
+  .carta[data-attr="Velocidad"]  .carta-orbe { background: #3E8FD6; }
+  .carta[data-attr="HP"]         .carta-orbe { background: #46A85F; }
+  .carta[data-attr="Luz"]        .carta-orbe { background: #E8C550; }
+  .carta[data-attr="Oscuridad"]  .carta-orbe { background: #7B4FB0; }
+  .carta:not([data-attr])        .carta-orbe { background: #6C7583; }
+
+  .carta-clan {
+    position: absolute;
+    top: 4px; left: 4px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: .58rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: rgba(255, 246, 224, .95);
+    background: rgba(28, 18, 48, .72);
+    padding: 0 4px;
+    z-index: 2;
+  }
+
+  .carta-tier {
+    position: absolute;
+    left: 3px; bottom: 3px;
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    font-size: .68rem;
+    line-height: 1;
+    color: #2B1C46;
+    background: linear-gradient(#FFE9A8, #D8A93F);
+    border: 1px solid rgba(90, 60, 10, .6);
+    padding: 2px 4px;
+    z-index: 2;
+  }
+
+  .carta-nombre {
+    font-size: .68rem;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--ink-2);
+    word-break: break-word;
+  }
+
+  .leyenda-cartas {
+    font-size: .8rem;
+    color: var(--ink-3);
+    margin: 0;
+  }
+
+  @media (max-width: 420px) {
+    .carta-iniciales { font-size: 1.15rem; }
+    .carta-nombre { font-size: .62rem; }
+  }
+
+  .ficha-img {
+    flex: 1 1 100%;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: .76rem;
+    color: var(--ink-2);
+    background: var(--ground);
+    border: 1px solid var(--line-soft);
+    padding: 5px 8px;
+  }
+  .ficha-img:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }

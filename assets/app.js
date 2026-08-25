@@ -338,7 +338,18 @@
   var inputNombre = document.getElementById("nombre");
   var quienEs     = document.getElementById("quien-es");
 
+  function pintarTitulo() {
+    var h1 = document.querySelector("h1");
+    var quien = visitando || nombre;
+    if (h1) {
+      h1.textContent = quien ? "Caja de " + quien : "Registro de Caja Britannia";
+    }
+    document.title = (quien ? "Caja de " + quien : "Registro de Caja Britannia") +
+                     " \u2014 7DS Grand Cross";
+  }
+
   function pintarNombre() {
+    pintarTitulo();
     if (visitando) {
       quienEs.textContent = "Estás viendo la caja de " + visitando;
     } else if (nombre) {
@@ -473,9 +484,23 @@
         save(); renderFichas(); renderJefes(); renderPosibles();
       });
 
+      var img = document.createElement("input");
+      img.type = "url";
+      img.className = "ficha-img";
+      img.placeholder = "URL del retrato (opcional)";
+      img.value = f.img || "";
+      img.disabled = !!visitando;
+      img.addEventListener("change", function () {
+        fichas[id] = fichas[id] || {};
+        if (img.value.trim()) { fichas[id].img = img.value.trim(); }
+        else { delete fichas[id].img; }
+        save(); renderPosibles();
+      });
+
       fila.appendChild(nom);
       fila.appendChild(selA);
       fila.appendChild(selC);
+      fila.appendChild(img);
       elFichas.appendChild(fila);
     });
   }
@@ -518,10 +543,16 @@
     Object.keys(U).forEach(function (id) {
       if (!owned[id]) { return; }
       var f = fichas[id] || {};
-      lista.push({ nombre: nombreCorto(id), attr: f.attr, clan: f.clan });
+      lista.push({
+        id: id, nombre: nombreCorto(id), attr: f.attr, clan: f.clan,
+        tier: U[id].tier, img: f.img
+      });
     });
-    propias.forEach(function (u) {
-      lista.push({ nombre: u.nombre, attr: u.attr, clan: u.clan });
+    propias.forEach(function (u, i) {
+      lista.push({
+        id: "propia:" + i, nombre: u.nombre, attr: u.attr, clan: u.clan,
+        tier: u.tier, img: u.img
+      });
     });
     return lista;
   }
@@ -709,52 +740,131 @@
 
   var elPosibles = document.getElementById("posibles");
 
+  function iniciales(nombre) {
+    var limpio = nombre.replace(/[\[\]()]/g, " ").trim();
+    var partes = limpio.split(/[\s,]+/).filter(Boolean);
+    return partes.slice(0, 2).map(function (x) { return x.charAt(0).toUpperCase(); }).join("");
+  }
+
+  function carta(u, rol) {
+    var c = document.createElement("div");
+    c.className = "carta";
+    if (u.attr) { c.setAttribute("data-attr", u.attr); }
+
+    var rolEl = document.createElement("span");
+    rolEl.className = "carta-rol" + (rol === "MAIN" ? " main" : "");
+    rolEl.textContent = rol;
+    c.appendChild(rolEl);
+
+    var marco = document.createElement("div");
+    marco.className = "carta-marco";
+
+    if (u.clan) {
+      var clanEl = document.createElement("span");
+      clanEl.className = "carta-clan";
+      clanEl.textContent = u.clan;
+      marco.appendChild(clanEl);
+    }
+
+    var orbe = document.createElement("span");
+    orbe.className = "carta-orbe";
+    orbe.title = u.attr || "sin atributo";
+    marco.appendChild(orbe);
+
+    if (u.img) {
+      var img = document.createElement("img");
+      img.className = "carta-retrato";
+      img.src = u.img;
+      img.alt = u.nombre;
+      img.loading = "lazy";
+      img.addEventListener("error", function () {
+        img.remove();
+        var ini = document.createElement("span");
+        ini.className = "carta-iniciales";
+        ini.textContent = iniciales(u.nombre);
+        marco.appendChild(ini);
+      });
+      marco.appendChild(img);
+    } else {
+      var ini2 = document.createElement("span");
+      ini2.className = "carta-iniciales";
+      ini2.textContent = iniciales(u.nombre);
+      marco.appendChild(ini2);
+    }
+
+    if (u.tier) {
+      var tier = document.createElement("span");
+      tier.className = "carta-tier";
+      tier.textContent = u.tier;
+      tier.title = "Tier " + u.tier + " en la lista de la comunidad";
+      marco.appendChild(tier);
+    }
+
+    c.appendChild(marco);
+
+    var nom = document.createElement("span");
+    nom.className = "carta-nombre";
+    nom.textContent = u.nombre;
+    c.appendChild(nom);
+
+    return c;
+  }
+
   function tarjetaGrupo(titulo, subtitulo, miembros) {
-    var card = document.createElement("div");
-    card.className = "team-card";
-    card.setAttribute("data-state", miembros.length >= 4 ? "full" : miembros.length >= 2 ? "close" : "far");
+    var wrap = document.createElement("div");
+    wrap.className = "equipo-juego";
+    wrap.setAttribute("data-state", miembros.length >= 4 ? "full" : miembros.length >= 2 ? "close" : "far");
 
     var head = document.createElement("div");
-    head.className = "team-head";
+    head.className = "equipo-juego-head";
     var nm = document.createElement("span");
     nm.className = "team-name"; nm.textContent = titulo;
     var ct = document.createElement("span");
     ct.className = "team-count";
     ct.textContent = Math.min(miembros.length, 4) + " / 4";
     head.appendChild(nm); head.appendChild(ct);
-
-    var pips = document.createElement("div");
-    pips.className = "pips";
-    for (var k = 0; k < 4; k++) {
-      var pip = document.createElement("span");
-      pip.className = "pip" + (k < miembros.length ? " on" : "");
-      pips.appendChild(pip);
-    }
-
-    var cuerpo = document.createElement("div");
-    cuerpo.className = "team-missing";
-    if (miembros.length >= 4) {
-      cuerpo.innerHTML = "<b class='ok4'>" + miembros.slice(0, 4).join(" · ") + "</b>";
-      if (miembros.length > 4) {
-        cuerpo.innerHTML += '<span class="locked-note">Suplentes: ' + miembros.slice(4).join(" · ") + "</span>";
-      }
-    } else {
-      cuerpo.textContent = miembros.join(" · ");
-      var falta = document.createElement("span");
-      falta.className = "locked-note";
-      falta.textContent = "Te faltan " + (4 - miembros.length) + " para completarlo";
-      cuerpo.appendChild(falta);
-    }
+    wrap.appendChild(head);
 
     var sub = document.createElement("span");
     sub.className = "clan-use";
     sub.textContent = subtitulo;
+    wrap.appendChild(sub);
 
-    card.appendChild(head);
-    card.appendChild(sub);
-    card.appendChild(pips);
-    card.appendChild(cuerpo);
-    return card;
+    var fila = document.createElement("div");
+    fila.className = "cartas";
+    miembros.slice(0, 4).forEach(function (u, idx) {
+      fila.appendChild(carta(u, idx === 0 ? "MAIN" : "MAIN"));
+    });
+    for (var k = miembros.length; k < 4; k++) {
+      var vacia = document.createElement("div");
+      vacia.className = "carta";
+      var rolV = document.createElement("span");
+      rolV.className = "carta-rol"; rolV.textContent = "LIBRE";
+      var marcoV = document.createElement("div");
+      marcoV.className = "carta-marco";
+      var ins = document.createElement("span");
+      ins.className = "carta-iniciales"; ins.textContent = "?";
+      marcoV.appendChild(ins);
+      vacia.appendChild(rolV); vacia.appendChild(marcoV);
+      fila.appendChild(vacia);
+    }
+    wrap.appendChild(fila);
+
+    if (miembros.length > 4) {
+      var subs = document.createElement("div");
+      subs.className = "cartas suplentes";
+      miembros.slice(4).forEach(function (u) { subs.appendChild(carta(u, "SUB")); });
+      wrap.appendChild(subs);
+    }
+
+    if (miembros.length < 4) {
+      var falta = document.createElement("p");
+      falta.className = "leyenda-cartas";
+      falta.textContent = "Te faltan " + (4 - miembros.length) + " para completarlo.";
+      wrap.appendChild(falta);
+    }
+
+    return wrap;
   }
 
   function renderPosibles() {
@@ -775,8 +885,8 @@
 
     var porAttr = {}, porClan = {};
     conFicha.forEach(function (u) {
-      if (u.attr) { (porAttr[u.attr] = porAttr[u.attr] || []).push(u.nombre); }
-      if (u.clan) { (porClan[u.clan] = porClan[u.clan] || []).push(u.nombre); }
+      if (u.attr) { (porAttr[u.attr] = porAttr[u.attr] || []).push(u); }
+      if (u.clan) { (porClan[u.clan] = porClan[u.clan] || []).push(u); }
     });
 
     var grupos = [];

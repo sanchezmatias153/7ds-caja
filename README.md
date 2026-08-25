@@ -78,6 +78,18 @@ Campos:
 | `duo`  | `true` si son dos personajes en una carta (King y Diane, Merlín y Escanor) |
 | `lock` | Texto del banner limitado. Si existe, la unidad se marca como no obtenible |
 
+## Retratos de las cartas
+
+Por defecto la carta muestra las **iniciales** de la unidad sobre el marco. Si quieres el
+retrato real, pega la URL de la imagen en el campo que aparece en la ficha de esa unidad
+("URL del retrato"). Si la imagen no carga, la carta vuelve sola a las iniciales.
+
+No vienen precargados a propósito: el repositorio público de assets nombra los archivos por
+número de variante (`icon_hero_ban_0006_s.png`, `icon_hero_ban_0011_s.png`…) y no existe una
+tabla que diga cuál corresponde a cuál versión del personaje. Mapearlos sería adivinar, y una
+carta con el retrato equivocado confunde más de lo que ayuda. Además son assets del juego,
+propiedad de Netmarble, así que cada quien decide si los enlaza.
+
 **2. Métela en un equipo**, en el array `TEAMS`:
 
 ```js
@@ -108,7 +120,9 @@ del [foro de Netmarble](https://forum.netmarble.com/7ds_en/list/1/1).
   por la app (tuyo o de un amigo) y marca las unidades solo. No borra lo que ya tenías marcado,
   y acepta tanto el formato nuevo (`CAJA 7DS DE:`) como el viejo (`MI CAJA 7DS`).
 - **Equipos que puedes armar** — no sale del wiki: agrupa TUS unidades por atributo y por clan
-  y te muestra cuáles llegan a 4, con suplentes.
+  y te muestra cuáles llegan a 4, con suplentes. Se dibujan como **cartas estilo juego**:
+  marco morado, orbe del atributo arriba a la derecha, clan arriba a la izquierda y tier abajo.
+  Los huecos salen como carta "LIBRE".
 - **Fichas de tus unidades** — atributo y clan de cada unidad que marcaste. Es lo que
   alimenta el cálculo de los jefes. También puedes agregar unidades tuyas que no estén
   en la lista meta.
@@ -140,3 +154,4 @@ El triángulo está en `GANA_A`: Fuerza > HP > Velocidad > Fuerza.
 - [ ] Sumar los jefes de Jefe Final / Templo con sus inmunidades
 - [ ] Prellenar atributo y clan de las 37 unidades meta para no tener que completarlas a mano
 - [ ] Botón "Copiar contexto para Claude" que arme el bloque completo de una
+- [ ] Guardar nivel y despertar por unidad para mostrarlos en la carta como en el juego

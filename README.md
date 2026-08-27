@@ -170,6 +170,17 @@ La **posición dentro del tier** viene del orden en que la tier list del wiki (G
 cada unidad — Gawain es el 1 de 20 en SSS, por ejemplo. El campo se guarda como `pos` en cada
 unidad de `UNITS`.
 
+Importante: el wiki tiene **tres tier lists distintas** y no dan lo mismo.
+
+| Lista | Entradas | URL |
+|---|---|---|
+| **PvP** (la que usamos) | 136 | `/wiki/PVP_Teams` — `PVP_Tier_List` redirige acá |
+| General | 370 | `/wiki/General_Tier_List` |
+| PvE | 163 | `/wiki/PVE_Tier_List` |
+
+Se nota la diferencia: Riyo es 4ª en SSS de PvP y no aparece arriba en las otras dos.
+Para la pestaña de PvP hay que usar la de PvP.
+
 Es la mejor referencia pública disponible, pero es una **valoración de la comunidad, no una
 estadística**. La página lo dice explícitamente para no vender el número como algo que no es.
 

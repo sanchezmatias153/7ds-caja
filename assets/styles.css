@@ -1093,3 +1093,24 @@
     .pvp-fila { padding: 10px 11px; gap: 9px; }
     .pvp-pos { font-size: 1.05rem; }
   }
+
+  .fecha-datos {
+    display: block;
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .11em;
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--ink-3);
+    margin: -6px 0 9px;
+  }
+  .fuente {
+    font-size: .84rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+    background: var(--surface);
+    border-left: 3px solid var(--brass);
+    padding: 10px 13px;
+    margin: 0 0 16px;
+  }
+  .fuente a { color: var(--brass); }

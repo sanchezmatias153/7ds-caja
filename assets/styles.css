@@ -1009,3 +1009,19 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
+  .tile-activa {
+    position: absolute;
+    left: 3px; top: 3px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: .55rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 0 3px;
+    z-index: 4;
+    background: var(--moss);
+    color: #fff;
+  }
+  .tile-activa ~ .tile-lock,
+  .tile-activa ~ .tile-duo { top: 17px; }

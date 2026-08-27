@@ -111,19 +111,22 @@ ese número**, si no los navegadores que ya visitaron la página siguen con la v
 Cada equipo lleva exactamente **4** ids. Si un id no existe en `UNITS`, la app no lo dibuja —
 conviene revisar que esté bien escrito.
 
-**3. Actualiza el total** si cambiaste la cantidad de unidades: busca `/ 37` en `index.html`
-y en `app.js` (`totalOwned + " / 37"`).
+**3. El total se calcula solo** desde `UNITS`. En `index.html` conviene igualar el valor inicial
+de `#s-units` para que no parpadee.
 
 ## Fuente de los datos
 
 Las composiciones salen de la página [PVP Teams](https://7dsgc.fandom.com/wiki/PVP_Teams)
-del wiki de la comunidad, actualizada el **6 de agosto de 2026**.
+del wiki de la comunidad, actualizada el **21 de agosto de 2026**.
 
 El estado de obtenibilidad (campo `lock`) viene de los avisos oficiales de invocación
 del [foro de Netmarble](https://forum.netmarble.com/7ds_en/list/1/1).
 
-> Ojo: el meta cambia con cada parche. Estos datos son del corte de agosto de 2026 y
-> **no incluyen a Gawain**, que salió el 19 de agosto.
+> Ojo: el meta cambia con cada parche. Último repaso de datos: **27 de agosto de 2026**.
+
+Campo `activa`: marca una unidad **limitada pero obtenible ahora mismo**, con el banner y la
+condición. Se distingue de `lock`, que es limitada y ya cerrada. En la grilla sale con etiqueta
+verde "¡disponible!".
 
 ## Cómo está armada la página
 
@@ -172,7 +175,6 @@ El triángulo está en `GANA_A`: Fuerza > HP > Velocidad > Fuerza.
 
 ## Pendientes
 
-- [ ] Agregar a Gawain y rehacer el equipo Apocalipsis cuando se conozca su kit
 - [ ] Sumar los jefes de Jefe Final / Templo con sus inmunidades
 - [ ] Prellenar atributo y clan de las 37 unidades meta para no tener que completarlas a mano
 - [ ] Botón "Copiar contexto para Claude" que arme el bloque completo de una

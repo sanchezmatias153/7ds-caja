@@ -41,24 +41,25 @@ window.CAJA7DS = (function () {
     anotherBan: { es: "Another Ban (el Ban mujer)", en: "(A Twisted World) Another Ban", tier: "SSS", lock: "Cross: IF, cerró 19-ago-2026", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/6/63/Anr_ban.png/revision/latest/scale-to-width-down/128" },
     mael:       { es: "Mael, Ángel de la Desesperación — [Alas Ennegrecidas]", en: "(Blackened Wings) Angel of Despair Mael", tier: "SS", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/a/ab/%28Blackened_Wings%29_Angel_of_Despair_Mael.png/revision/latest/scale-to-width-down/128" },
     elizabeth:  { es: "Reina Elizabeth — [Regalo de Nieve]", en: "(Gift of the Snow) Queen Elizabeth", tier: "SS", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/d/df/%28Gift_of_the_Snow%29_Queen_Elizabeth.png/revision/latest/scale-to-width-down/128" },
-    sariel:     { es: "Sariel, Pacto de Luz — [Vientos de Esperanza]", en: "(Winds of Hope) Covenant of Light Sariel — rojo", tier: "S", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/b/b9/%28Winds_of_Hope%29_Covenant_of_Light_Sariel.png/revision/latest/scale-to-width-down/128" }
+    sariel:     { es: "Sariel, Pacto de Luz — [Vientos de Esperanza]", en: "(Winds of Hope) Covenant of Light Sariel — rojo", tier: "S", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/b/b9/%28Winds_of_Hope%29_Covenant_of_Light_Sariel.png/revision/latest/scale-to-width-down/128" },
+    gawain:     { es: "Gawain, Caballero del Sol — [Magia Dorada]", en: "(Gold-Colored Magic) Knight of the Sun Gawain", tier: "SSS", activa: "Festival 6.5° Aniversario — garantizado a 900 de mileage", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/a/a9/Knight_of_the_Sun_Gawain.png/revision/latest/scale-to-width-down/128" },
+    percival:   { es: "Percival, Pequeño Héroe — [Poder Desconocido]", en: "(Unknown Power) Little Hero Percival", tier: "S", img: "https://static.wikia.nocookie.net/7dsgc_mobile_game/images/8/8f/%28Unknown_Power%29_Little_Hero_Percival.png/revision/latest/scale-to-width-down/128" }
   };
 
   var TEAMS = [
-    { name: "Ragnarok",            use: "Facción nórdica",      m: ["skuld","hel","tyr","dianeShine"] },
-    { name: "Gigantes",            use: "Clan Gigante",         m: ["skuld","kingDiane","loki","drole"] },
-    { name: "Apocalipsis",         use: "4 Caballeros",         m: ["tristan","lancelot","anghalhad","shinra"] },
-    { name: "Demonios · versión A", use: "Clan Demonio",        m: ["nemesis","estarossa","demonKing","chandler"] },
-    { name: "Demonios · versión B", use: "Clan Demonio",        m: ["nemesis","demonKing","cusack","gelda"] },
-    { name: "Humanos · versión A",  use: "Clan Humano",         m: ["sbabea","riyo","enjin","taizoo"] },
-    { name: "Humanos · versión B",  use: "Clan Humano",         m: ["rudo","riyo","enjin","zanka"] },
-    { name: "Sacrificio · versión A", use: "Daño por sacrificio", m: ["roxy","salos","sabunak","merlEsc"] },
-    { name: "Sacrificio · versión B", use: "Daño por sacrificio", m: ["hel","salos","sabunak","merlEsc"] },
-    { name: "Hadas · versión A",   use: "Clan Hada",            m: ["sbabea","emilia","kingTree","tioreh"] },
-    { name: "Hadas · versión B",   use: "Clan Hada",            m: ["sbabea","kingTree","elaineXmas","merlEsc"] },
-    { name: "Pecados · versión A", use: "Los 7 Pecados",        m: ["nemesis","merlEsc","kingTree","banTrans"] },
-    { name: "Pecados · versión B", use: "Los 7 Pecados",        m: ["nemesis","anotherMeli","anotherBan","merlEsc"] },
-    { name: "Diosas",              use: "Clan Diosa",           m: ["tristan","mael","elizabeth","sariel"] }
+    { name: "Ragnarok",              use: "Facción nórdica",       m: ["skuld","hel","tyr","dianeShine"] },
+    { name: "Gigantes",              use: "Clan Gigante",          m: ["skuld","kingDiane","loki","drole"] },
+    { name: "Apocalipsis",           use: "4 Caballeros",          m: ["tristan","gawain","percival","tioreh"] },
+    { name: "Demonios",              use: "Clan Demonio",          m: ["nemesis","estarossa","anotherMeli","chandler"] },
+    { name: "Humanos · versión A",   use: "Clan Humano",           m: ["sbabea","riyo","enjin","taizoo"] },
+    { name: "Humanos · versión B",   use: "Clan Humano",           m: ["rudo","riyo","enjin","taizoo"] },
+    { name: "Sacrificio · versión A", use: "Daño por sacrificio",  m: ["roxy","salos","sabunak","merlEsc"] },
+    { name: "Sacrificio · versión B", use: "Daño por sacrificio",  m: ["hel","salos","sabunak","merlEsc"] },
+    { name: "Hadas · versión A",     use: "Clan Hada",             m: ["sbabea","emilia","kingTree","tioreh"] },
+    { name: "Hadas · versión B",     use: "Clan Hada",             m: ["sbabea","kingTree","elaineXmas","merlEsc"] },
+    { name: "Pecados · versión A",   use: "Los 7 Pecados",         m: ["nemesis","merlEsc","kingTree","banTrans"] },
+    { name: "Pecados · versión B",   use: "Los 7 Pecados",         m: ["nemesis","anotherMeli","anotherBan","merlEsc"] },
+    { name: "Diosas",                use: "Clan Diosa",            m: ["tristan","mael","elizabeth","sariel"] }
   ];
 
   /* Atributos y clanes del juego. El triangulo es: Fuerza > HP > Velocidad > Fuerza. */

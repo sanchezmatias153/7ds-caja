@@ -2,6 +2,7 @@
   "use strict";
 
   var U       = window.CAJA7DS.UNITS;
+  var TOTAL   = Object.keys(U).length;
   var TEAMS   = window.CAJA7DS.TEAMS;
   var BOSSES  = window.CAJA7DS.BOSSES;
   var ATTRS   = window.CAJA7DS.ATTRS;
@@ -126,6 +127,13 @@
       tg.textContent = u.tier;
       marco.appendChild(tg);
 
+      if (u.activa) {
+        var ac = document.createElement("span");
+        ac.className = "tile-activa";
+        ac.textContent = "¡disponible!";
+        ac.title = u.activa;
+        marco.appendChild(ac);
+      }
       if (u.lock) {
         var lk = document.createElement("span");
         lk.className = "tile-lock";
@@ -274,7 +282,7 @@
 
     var reachable = cards.filter(function (c) { return !c._blocked; }).length;
 
-    document.getElementById("s-units").textContent = totalOwned + " / 37";
+    document.getElementById("s-units").textContent = totalOwned + " / " + TOTAL;
     document.getElementById("s-full").textContent = String(fullCount);
     document.getElementById("s-reach").textContent = String(reachable);
 
@@ -310,7 +318,7 @@
     var lines = [];
     var quien = visitando ? visitando : (nombre || "");
     lines.push("CAJA 7DS DE: " + (quien || "(sin nombre)"));
-    lines.push(totalOwned + "/37 unidades meta · " + fullCount + " equipo(s) completo(s)");
+    lines.push(totalOwned + "/" + TOTAL + " unidades meta · " + fullCount + " equipo(s) completo(s)");
     lines.push("");
 
     var have = [];

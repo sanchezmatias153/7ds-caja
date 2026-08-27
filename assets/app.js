@@ -311,6 +311,7 @@
       renderPropias();
       renderJefes();
       renderPosibles();
+      renderPvP();
     }
   }
 
@@ -991,10 +992,118 @@
     mostrar(guardada);
   })();
 
+
+  // ================= ranking PvP =================
+  // No existen tasas de victoria publicas para 7DS. El orden sale del tier
+  // y de la posicion dentro del tier en la tier list del wiki (GameWith).
+
+  var PESO_TIER = { SSS: 1000, SS: 600, S: 300 };
+
+  function puntajeUnidad(id) {
+    var u = U[id];
+    if (!u) { return 0; }
+    var base = PESO_TIER[u.tier] || 0;
+    var pos = u.pos || 99;      // sin posicion conocida: al final de su tier
+    return Math.max(base - pos * 4, 0);
+  }
+
+  function renderPvP() {
+    var cont = document.getElementById("pvp");
+    if (!cont) { return; }
+    cont.innerHTML = "";
+
+    var filas = TEAMS.map(function (t) {
+      var pts = t.m.reduce(function (acc, id) { return acc + puntajeUnidad(id); }, 0);
+      var tengo = t.m.filter(function (id) { return !!owned[id]; });
+      var faltan = t.m.filter(function (id) { return !owned[id]; });
+      var bloqueadas = faltan.filter(function (id) { return !!U[id].lock; });
+      var comp = {};
+      t.m.forEach(function (id) { comp[U[id].tier] = (comp[U[id].tier] || 0) + 1; });
+      return { t: t, pts: pts, tengo: tengo.length, faltan: faltan, bloqueadas: bloqueadas, comp: comp };
+    }).sort(function (x, y) { return y.pts - x.pts; });
+
+    var maxPts = filas.length ? filas[0].pts : 1;
+
+    filas.forEach(function (f, i) {
+      var card = document.createElement("div");
+      card.className = "pvp-fila";
+      card.setAttribute("data-estado",
+        f.tengo === 4 ? "listo" : f.bloqueadas.length ? "bloqueado" : "posible");
+
+      var pos = document.createElement("span");
+      pos.className = "pvp-pos";
+      pos.textContent = "#" + (i + 1);
+
+      var cuerpo = document.createElement("div");
+      cuerpo.className = "pvp-cuerpo";
+
+      var linea1 = document.createElement("div");
+      linea1.className = "pvp-head";
+      var nm = document.createElement("span");
+      nm.className = "team-name";
+      nm.textContent = f.t.name;
+      var comp = document.createElement("span");
+      comp.className = "pvp-comp";
+      comp.textContent = ["SSS", "SS", "S"].filter(function (k) { return f.comp[k]; })
+        .map(function (k) { return f.comp[k] + "\u00d7" + k; }).join(" + ");
+      linea1.appendChild(nm);
+      linea1.appendChild(comp);
+
+      var barra = document.createElement("div");
+      barra.className = "pvp-barra";
+      var relleno = document.createElement("span");
+      relleno.style.width = Math.round(f.pts / maxPts * 100) + "%";
+      barra.appendChild(relleno);
+      barra.title = "Puntaje " + f.pts + " (por tier de sus integrantes)";
+
+      var retratos = document.createElement("div");
+      retratos.className = "mini-equipo";
+      f.t.m.forEach(function (id) {
+        var c = document.createElement("div");
+        c.className = "mini";
+        c.setAttribute("data-tengo", owned[id] ? "si" : "no");
+        if (U[id].img) {
+          var im = document.createElement("img");
+          im.src = U[id].img; im.alt = nombreCorto(id); im.loading = "lazy";
+          im.addEventListener("error", function () { im.remove(); });
+          c.appendChild(im);
+        }
+        var n2 = document.createElement("span");
+        n2.className = "mini-nombre";
+        n2.textContent = nombreCorto(id);
+        c.appendChild(n2);
+        c.title = nombreCorto(id) + " \u00b7 tier " + U[id].tier +
+                  (owned[id] ? " \u00b7 la tienes" : " \u00b7 te falta");
+        retratos.appendChild(c);
+      });
+
+      var estado = document.createElement("div");
+      estado.className = "pvp-estado";
+      if (f.tengo === 4) {
+        estado.innerHTML = '<b class="ok">Puedes armarlo ya.</b>';
+      } else if (f.bloqueadas.length) {
+        estado.innerHTML = 'Te faltan ' + f.faltan.length + ' \u00b7 <b class="no">' +
+          f.bloqueadas.length + ' de banners ya cerrados</b>';
+      } else {
+        estado.innerHTML = 'Te faltan ' + f.faltan.length +
+          ' \u00b7 <b class="si">todas se pueden conseguir</b>';
+      }
+
+      cuerpo.appendChild(linea1);
+      cuerpo.appendChild(barra);
+      cuerpo.appendChild(retratos);
+      cuerpo.appendChild(estado);
+      card.appendChild(pos);
+      card.appendChild(cuerpo);
+      cont.appendChild(card);
+    });
+  }
+
   pintarNombre();
   render();
   renderFichas();
   renderPropias();
   renderJefes();
   renderPosibles();
+  renderPvP();
 })();

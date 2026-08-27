@@ -1025,3 +1025,71 @@
   }
   .tile-activa ~ .tile-lock,
   .tile-activa ~ .tile-duo { top: 17px; }
+
+  /* ---------- ranking PvP ---------- */
+
+  .pvp-lista { display: flex; flex-direction: column; gap: 10px; }
+
+  .pvp-fila {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-left: 4px solid var(--line);
+    padding: 12px 14px;
+  }
+  .pvp-fila[data-estado="listo"]     { border-left-color: var(--moss); }
+  .pvp-fila[data-estado="posible"]   { border-left-color: var(--brass); }
+  .pvp-fila[data-estado="bloqueado"] { border-left-color: var(--ink-3); border-left-style: dashed; }
+
+  .pvp-pos {
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--brass);
+    min-width: 2.4ch;
+    font-variant-numeric: tabular-nums;
+    padding-top: 2px;
+  }
+  .pvp-cuerpo { flex: 1; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+
+  .pvp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pvp-comp {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: .74rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  .pvp-barra {
+    height: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .pvp-barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--brass), var(--moss));
+  }
+
+  .pvp-estado { font-size: .85rem; color: var(--ink-2); }
+  .pvp-estado .ok { color: var(--moss); }
+  .pvp-estado .si { color: var(--brass); }
+  .pvp-estado .no { color: var(--crimson); }
+
+  @media (max-width: 480px) {
+    .pvp-fila { padding: 10px 11px; gap: 9px; }
+    .pvp-pos { font-size: 1.05rem; }
+  }

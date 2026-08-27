@@ -130,7 +130,7 @@ verde "¡disponible!".
 
 ## Cómo está armada la página
 
-Barra superior fija con **4 pestañas**: Mi caja · Equipos · Jefes · Compartir.
+Barra superior fija con **5 pestañas**: Mi caja · Equipos · Mejores PvP · Jefes · Compartir.
 La pestaña abierta se recuerda entre visitas. Antes era una sola página de 14 pantallas
 de scroll; ahora cada pestaña son 2-3.
 
@@ -151,7 +151,27 @@ Las que no tienes salen en gris; al marcarlas toman color y borde verde.
 - **Fichas de tus unidades** — atributo y clan de cada unidad que marcaste. Es lo que
   alimenta el cálculo de los jefes. También puedes agregar unidades tuyas que no estén
   en la lista meta.
+- **Mejores PvP** — los 13 equipos ordenados de mejor a peor, con barra de puntaje,
+  composición por tier y si puedes armarlo.
 - **Jefes** — ficha real de cada jefe de Death Match y qué de tu caja le hace ventaja.
+
+## De dónde sale el orden de "Mejores PvP"
+
+**7DS no publica tasas de victoria: no existen.** Lo busqué y lo único público son tier lists
+de la comunidad. Así que el puntaje se calcula con lo que sí es dato:
+
+```
+puntaje unidad = peso del tier - (posición dentro del tier × 4)
+peso: SSS 1000 · SS 600 · S 300
+puntaje equipo = suma de sus 4 integrantes
+```
+
+La **posición dentro del tier** viene del orden en que la tier list del wiki (GameWith) lista a
+cada unidad — Gawain es el 1 de 20 en SSS, por ejemplo. El campo se guarda como `pos` en cada
+unidad de `UNITS`.
+
+Es la mejor referencia pública disponible, pero es una **valoración de la comunidad, no una
+estadística**. La página lo dice explícitamente para no vender el número como algo que no es.
 
 ## Cómo agregar jefes
 

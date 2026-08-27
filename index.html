@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600&display=swap">
-<link rel="stylesheet" href="assets/styles.css?v=7">
+<link rel="stylesheet" href="assets/styles.css?v=8">
 </head>
 <body>
 
@@ -19,6 +19,7 @@
     <nav class="menu" id="menu">
       <button data-tab="caja"      class="on">Mi caja</button>
       <button data-tab="equipos">Equipos</button>
+      <button data-tab="pvp">Mejores PvP</button>
       <button data-tab="jefes">Jefes</button>
       <button data-tab="compartir">Compartir</button>
     </nav>
@@ -96,6 +97,18 @@
     <div class="lista-equipos" id="board"></div>
   </section>
 
+  <!-- ============ PVP ============ -->
+  <section class="tab" data-tab="pvp" hidden>
+    <h2>Mejores equipos de PvP</h2>
+    <p class="section-note">
+      Ordenados de mejor a peor. <strong>Ojo con qué significa el orden:</strong> 7DS no publica
+      tasas de victoria, no existen. El puntaje sale del <strong>tier de cada integrante y su
+      posición dentro de la tier list</strong> del wiki (GameWith, 21-08-2026). Es la mejor
+      referencia pública que hay, pero es una valoración de la comunidad, no una estadística.
+    </p>
+    <div id="pvp" class="pvp-lista"></div>
+  </section>
+
   <!-- ============ JEFES ============ -->
   <section class="tab" data-tab="jefes" hidden>
     <h2>Qué de tu caja sirve</h2>
@@ -138,7 +151,7 @@
 
 </div>
 
-<script src="assets/data.js?v=7"></script>
-<script src="assets/app.js?v=7"></script>
+<script src="assets/data.js?v=8"></script>
+<script src="assets/app.js?v=8"></script>
 </body>
 </html>
